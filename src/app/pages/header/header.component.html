@@ -1,0 +1,51 @@
+<header class="bg-green-700 text-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+
+    <!-- Logo -->
+    <div class="text-2xl font-bold">
+      <a routerLink="/" class="hover:text-green-200">FreshLink</a>
+    </div>
+
+    <!-- Hamburger Button (mobile only) -->
+    <button
+      class="md:hidden text-white focus:outline-none"
+      (click)="toggleMenu()"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+        viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- Desktop Nav -->
+    <nav class="hidden md:flex gap-6 text-sm font-medium">
+      <a routerLink="/" class="hover:text-green-200">Home</a>
+      <a routerLink="/produce" class="hover:text-green-200">Browse</a>
+      <a routerLink="/vendor-dashboard" class="hover:text-green-200">Vendor</a>
+      <a routerLink="/farmer-dashboard" class="hover:text-green-200">Farmer</a>
+    </nav>
+
+    <!-- Buttons (Desktop) -->
+    <div class="hidden md:flex gap-4">
+      <a routerLink="/login" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-green-100 transition">
+        Login
+      </a>
+      <a routerLink="/register" class="border border-white px-4 py-2 rounded hover:bg-white hover:text-green-700 transition">
+        Register
+      </a>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div *ngIf="menuOpen" class="md:hidden px-4 pb-4">
+    <nav class="flex flex-col gap-3 text-sm font-medium">
+      <a routerLink="/" class="hover:text-green-200">Home</a>
+      <a routerLink="/produce" class="hover:text-green-200">Browse</a>
+      <a routerLink="/vendor-dashboard" class="hover:text-green-200">Vendor</a>
+      <a routerLink="/farmer-dashboard" class="hover:text-green-200">Farmer</a>
+      <a routerLink="/login" class="hover:text-green-200">Login</a>
+      <a routerLink="/register" class="hover:text-green-200">Register</a>
+    </nav>
+  </div>
+</header>
