@@ -1,11 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
-})
-export class ChatComponent {
+  styleUrls: ['./chat.component.css'],
+  imports: [CommonModule],
+  standalone: true
+})export class ChatComponent {
   newMessage: string = '';
 
   messages = [
