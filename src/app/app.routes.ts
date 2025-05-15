@@ -8,6 +8,9 @@ import { ChatComponent } from './pages/chat/chat.component';
 import { ProduceComponent } from './pages/produce/produce.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { ErrorComponent } from './pages/error/error.component';
+import { BlogsComponent } from './pages/blogs/blogs.component';
+import { ServicesComponent } from './pages/services/services.component';
+import { AboutComponent } from './pages/about/about.component';
 
 export const routes: Routes = [
     {path: '','title':'Home','component': HomeComponent},
@@ -18,5 +21,8 @@ export const routes: Routes = [
     {path: 'orders','title':'Orders',component: OrdersComponent},
     {path: 'chat','title':'Chat',component: ChatComponent},
     {path:'register','title':'Register',component: RegisterComponent},
+    {path:'services','title':'Services',component: ServicesComponent},
+    {path:'blogs','title':'Blogs',component:BlogsComponent},
+    {path:'about','title':'About',component: AboutComponent},
     {path:'**','title':'400',component: ErrorComponent}
 ];
