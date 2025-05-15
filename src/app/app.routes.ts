@@ -11,6 +11,8 @@ import { ErrorComponent } from './pages/error/error.component';
 import { BlogsComponent } from './pages/blogs/blogs.component';
 import { ServicesComponent } from './pages/services/services.component';
 import { AboutComponent } from './pages/about/about.component';
+import { ContactComponent } from './pages/contact/contact.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
     {path: '','title':'Home','component': HomeComponent},
@@ -24,5 +26,8 @@ export const routes: Routes = [
     {path:'services','title':'Services',component: ServicesComponent},
     {path:'blogs','title':'Blogs',component:BlogsComponent},
     {path:'about','title':'About',component: AboutComponent},
+    {path:'contact','title':'Contact',component: ContactComponent},
+    {path:'login','title':'Login',component: LoginComponent},
+    {path:'register','title':'Register',component: RegisterComponent},
     {path:'**','title':'400',component: ErrorComponent}
 ];
