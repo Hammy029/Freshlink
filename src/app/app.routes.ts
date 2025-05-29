@@ -6,13 +6,15 @@ import { PaymentComponent } from './pages/payment/payment.component';
 import { OrdersComponent } from './pages/orders/orders.component';
 import { ChatComponent } from './pages/chat/chat.component';
 import { ProduceComponent } from './pages/produce/produce.component';
-import { RegisterComponent } from './pages/register/register.component';
+//import { RegisterComponent } from './pages/register/register.component';
 import { ErrorComponent } from './pages/error/error.component';
 import { BlogsComponent } from './pages/blogs/blogs.component';
 import { ServicesComponent } from './pages/services/services.component';
 import { AboutComponent } from './pages/about/about.component';
 import { ContactComponent } from './pages/contact/contact.component';
-import { LoginComponent } from './pages/login/login.component';
+import { RegisterComponent } from './Authentications/register/register.component';
+import { LoginComponent } from './Authentications/login/login.component';
+//import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
     {path: '','title':'Home','component': HomeComponent},
