@@ -1,18 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../core/auth/auth.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-header',
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive, CommonModule, FormsModule],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css'],
-  imports: [CommonModule,RouterLink],
-  standalone: true
+  styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  menuOpen = false;
+  isMobileMenuOpen = false;
 
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
+  constructor(public authService: AuthService) {}
+
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
+
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();  // Assuming your AuthService has this method
   }
 }

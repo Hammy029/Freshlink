@@ -1,57 +1,62 @@
-<header class="bg-green-700 text-white shadow-md sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+<nav class="bg-[#006633] text-white shadow-lg fixed w-full z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
 
-    <!-- Logo -->
-    <div class="text-2xl font-bold">
-      <a routerLink="/" class="hover:text-green-200">FreshLink</a>
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a routerLink="/" class="text-2xl font-bold text-white hover:text-red-300"></a>
+      </div>
+
+      <!-- Desktop Navigation + Auth Actions -->
+      <div class="hidden md:flex items-center space-x-6">
+        <!-- Navigation Links (shown to all users) -->
+        <a routerLink="/" routerLinkActive="text-[ff2c2c]" class="hover:text-[red-300] transition">Home</a>
+        <a routerLink="/about" routerLinkActive="text-red-300" class="hover:text-red-300 transition">About</a>
+        <a routerLink="/services" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Services</a>
+        <a routerLink="/farmer" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Farmer</a>
+        <a routerLink="/vendor" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Vendor</a>
+        <a routerLink="/contact" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Contact</a>
+        <a routerLink="/blogs" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Blogs</a>
+        <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Dashboard</a>
+
+        <!-- Auth Buttons -->
+        <a *ngIf="!isLoggedIn()" routerLink="/login" class="hover:text-red-300 transition">Login</a>
+        <button *ngIf="isLoggedIn()" (click)="logout()" class="hover:text-red-300 transition">Logout</button>
+      </div>
+
+      <!-- Hamburger Button (Mobile) -->
+      <div class="md:hidden">
+        <button (click)="toggleMobileMenu()" class="focus:outline-none">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+               viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path *ngIf="!isMobileMenuOpen" d="M4 6h16M4 12h16M4 18h16" />
+            <path *ngIf="isMobileMenuOpen" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
     </div>
+  </div>
 
-    <!-- Hamburger Button (mobile only) -->
-    <button
-      class="md:hidden text-white focus:outline-none"
-      (click)="toggleMenu()"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-        viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16" />
-      </svg>
+  <!-- Mobile Nav Menu -->
+  <div *ngIf="isMobileMenuOpen" class="md:hidden fixed inset-0 bg-green-700 bg-opacity-95 z-50 p-4 flex flex-col">
+    <!-- Close button -->
+    <button (click)="closeMobileMenu()" class="self-end text-white text-3xl font-bold focus:outline-none">
+      &times;
     </button>
 
-    <!-- Desktop Nav -->
-    <nav class="hidden md:flex gap-6 text-sm font-medium">
-      <a routerLink="/" class="hover:text-green-200">Home</a>
-      <a routerLink="/about" class="hover:text-green-200">About</a>
-      <a routerLink="/services" class="hover:text-green-200">Services</a>
-      <a routerLink="/blogs" class="hover:text-green-200">Blogs</a>
-      <a routerLink="/contact" class="hover:text-green-200">Contact</a>
-      <a routerLink="/produce" class="hover:text-green-200">Produce</a>
-      <a routerLink="/vendor" class="hover:text-green-200">Vendor</a>
-      <a routerLink="/farmer" class="hover:text-green-200">Farmer</a>
-    </nav>
+    <!-- Mobile Links -->
+    <nav class="mt-4 space-y-6 flex flex-col">
+      <a routerLink="/" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Home</a>
+      <a routerLink="/about" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">About</a>
+      <a routerLink="/services" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Services</a>
+      <a routerLink="/farm" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Farm</a>
+      <a routerLink="/contact" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Contact</a>
+      <a routerLink="/blogs" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Blogs</a>
+      <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Dashboard</a>
 
-    <!-- Buttons (Desktop) -->
-    <div class="hidden md:flex gap-4">
-      <a routerLink="/login" class="bg-white text-green-700 px-4 py-2 rounded hover:bg-green-100 transition">
-        Login
-      </a>
-      <a routerLink="/register" class="border border-white px-4 py-2 rounded hover:bg-white hover:text-green-700 transition">
-        Register
-      </a>
-    </div>
-  </div>
-
-  <!-- Mobile Menu -->
-  <div *ngIf="menuOpen" class="md:hidden px-4 pb-4">
-    <nav class="flex flex-col gap-3 text-sm font-medium">
-      <a routerLink="/" class="hover:text-green-200">Home</a>
-      <a routerLink="/about" class="hover:text-green-200">About</a>
-      <a routerLink="/services" class="hover:text-green-200">Services</a>
-      <a routerLink="/blogs" class="hover:text-green-200">Blogs</a>
-      <a routerLink="/contact" class="hover:text-green-200">Contact</a>
-      <a routerLink="/produce" class="hover:text-green-200">Produce</a>
-      <a routerLink="/vendor" class="hover:text-green-200">Vendor</a>
-      <a routerLink="/farmer" class="hover:text-green-200">Farmer</a>
+      <!-- Auth Buttons -->
+      <a *ngIf="!isLoggedIn()" routerLink="/login" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Login</a>
+      <button *ngIf="isLoggedIn()" (click)="logout(); closeMobileMenu()" class="block text-left text-white hover:text-red-300 text-xl">Logout</button>
     </nav>
   </div>
-</header>
+</nav>
