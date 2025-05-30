@@ -19,11 +19,11 @@ import { UpdatePasswordComponent } from './authentication/update-password/update
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './core/auth/auth.guard';
-import { UserfarmerComponent } from './dashboard/userfarmer/userfarmer.component';
+// import { UserfarmerComponent } from './dashboard/userfarmer/userfarmer.component';
 import { UservendorComponent } from './dashboard/uservendor/uservendor.component';
-//import { UserFarmerComponent } from './pages/userfarmer/userfarmer.component';
-//import { UserVendorComponent } from './pages/uservendor/uservendor.component';
-//import { AuthGuard } from './guards/auth.guard';  // Make sure this exists
+import { UserfarmerComponent } from './dashboard/userfarmer/userfarmer.component';
+import { UsercategoryComponent } from './dashboard/usercategory/usercategory.component';
+
 
 export const routes: Routes = [
   { path: '', title: 'Home', component: HomeComponent },
@@ -61,6 +61,12 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         title: 'User Vendor',
       },
+      {
+        path:'usercategory',
+        component:UsercategoryComponent,
+        canActivate:[AuthGuard],
+        'title':'Category'
+      }
     ],
   },
   { path: '**', title: '400', component: ErrorComponent },
