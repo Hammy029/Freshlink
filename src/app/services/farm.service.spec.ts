@@ -1,16 +1,42 @@
-import { TestBed } from '@angular/core/testing';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import { FarmService } from './farm.service';
+export interface Farm {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  quantity: number;
+  category: string;
+  farmer: string;
+}
 
-describe('FarmService', () => {
-  let service: FarmService;
+@Injectable({
+  providedIn: 'root'
+})
+export class FarmService {
+  private apiUrl = 'http://localhost:3000/farm'; // adjust accordingly
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(FarmService);
-  });
+  constructor(private http: HttpClient) {}
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-});
+  getFarms(): Observable<Farm[]> {
+    return this.http.get<Farm[]>(this.apiUrl);
+  }
+
+  getFarm(id: string): Observable<Farm> {
+    return this.http.get<Farm>(`${this.apiUrl}/${id}`);
+  }
+
+  createFarm(farm: Partial<Farm>): Observable<Farm> {
+    return this.http.post<Farm>(this.apiUrl, farm);
+  }
+
+  updateFarm(id: string, farm: Partial<Farm>): Observable<Farm> {
+    return this.http.patch<Farm>(`${this.apiUrl}/${id}`, farm);
+  }
+
+  deleteFarm(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+}
