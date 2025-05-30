@@ -18,26 +18,50 @@ import { ForgotPasswordComponent } from './authentication/forgot-password/forgot
 import { UpdatePasswordComponent } from './authentication/update-password/update-password.component';
 import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from './core/auth/auth.guard';
+import { UserfarmerComponent } from './dashboard/userfarmer/userfarmer.component';
+import { UservendorComponent } from './dashboard/uservendor/uservendor.component';
+//import { UserFarmerComponent } from './pages/userfarmer/userfarmer.component';
+//import { UserVendorComponent } from './pages/uservendor/uservendor.component';
+//import { AuthGuard } from './guards/auth.guard';  // Make sure this exists
 
 export const routes: Routes = [
-    {path: '','title':'Home','component': HomeComponent},
-    {path: 'farmer','title':'Farmer',component: FarmerComponent},
-    {path: 'vendor','title':'Vendor',component: VendorComponent},
-    {path: 'produce','title':'Produce',component: ProduceComponent},
-    {path: 'payment','title':'Payment',component: PaymentComponent},
-    {path: 'orders','title':'Orders',component: OrdersComponent},
-    {path: 'chat','title':'Chat',component: ChatComponent},
-    {path:'register','title':'Register',component: RegisterComponent},
-    {path:'services','title':'Services',component: ServicesComponent},
-    {path:'blogs','title':'Blogs',component:BlogsComponent},
-    {path:'about','title':'About',component: AboutComponent},
-    {path:'contact','title':'Contact',component: ContactComponent},
-    {path:'login','title':'Login',component: LoginComponent},
-    {path:'register','title':'Register',component: RegisterComponent},
-    {path:'google-callback','title':'Google', component:GoogleCallbackComponent},
-    {path:'forgot-password','title':'Forget password', component:ForgotPasswordComponent},
-    {path:'update-password', 'title':'Update password', component:UpdatePasswordComponent},
-    {path:'reset-password', 'title':'Reset password', component:ResetPasswordComponent},
-    {path:'dashboard', 'title':'Dashboard',component:DashboardComponent},
-    {path:'**','title':'400',component: ErrorComponent}
+  { path: '', title: 'Home', component: HomeComponent },
+  { path: 'farmer', title: 'Farmer', component: FarmerComponent },
+  { path: 'vendor', title: 'Vendor', component: VendorComponent },
+  { path: 'produce', title: 'Produce', component: ProduceComponent },
+  { path: 'payment', title: 'Payment', component: PaymentComponent },
+  { path: 'orders', title: 'Orders', component: OrdersComponent },
+  { path: 'chat', title: 'Chat', component: ChatComponent },
+  { path: 'register', title: 'Register', component: RegisterComponent },
+  { path: 'services', title: 'Services', component: ServicesComponent },
+  { path: 'blogs', title: 'Blogs', component: BlogsComponent },
+  { path: 'about', title: 'About', component: AboutComponent },
+  { path: 'contact', title: 'Contact', component: ContactComponent },
+  { path: 'login', title: 'Login', component: LoginComponent },
+  { path: 'google-callback', title: 'Google', component: GoogleCallbackComponent },
+  { path: 'forgot-password', title: 'Forget password', component: ForgotPasswordComponent },
+  { path: 'update-password', title: 'Update password', component: UpdatePasswordComponent },
+  { path: 'reset-password', title: 'Reset password', component: ResetPasswordComponent },
+  {
+    path: 'dashboard',
+    title: 'Dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'userfarmer',
+        component: UserfarmerComponent,
+        canActivate: [AuthGuard],
+        title: 'User Farmer',
+      },
+      {
+        path: 'uservendor',
+        component: UservendorComponent,
+        canActivate: [AuthGuard],
+        title: 'User Vendor',
+      },
+    ],
+  },
+  { path: '**', title: '400', component: ErrorComponent },
 ];
