@@ -55,6 +55,9 @@ export class UserfarmerComponent implements OnInit {
   private fetchProducts(): void {
     this.farmService.getAllProducts().subscribe({
       next: (data: any[]) => {
+        // Debug check to verify category format
+        console.log('Fetched products:', data);
+
         this.products = data.map(prod => ({
           ...prod,
           status: prod.status || 'Available'
@@ -125,36 +128,36 @@ export class UserfarmerComponent implements OnInit {
     this.editingProduct = null;
   }
 
- updateProduct(): void {
-  if (!this.editingProduct) return;
+  updateProduct(): void {
+    if (!this.editingProduct) return;
 
-  const updatedPayload: ProductPayload = {
-    title: this.editingProduct.title,
-    description: this.editingProduct.description,
-    price: Number(this.editingProduct.price),
-    quantity: Number(this.editingProduct.quantity),
-    category: this.editingProduct.category,
-    status: this.editingProduct.status || 'Available'
-  };
+    const updatedPayload: ProductPayload = {
+      title: this.editingProduct.title,
+      description: this.editingProduct.description,
+      price: Number(this.editingProduct.price),
+      quantity: Number(this.editingProduct.quantity),
+      category: this.editingProduct.category,
+      status: this.editingProduct.status || 'Available'
+    };
 
-  this.farmService.updateProduct(this.editingProduct._id, updatedPayload).subscribe({
-    next: updated => {
-      const index = this.products.findIndex(p => p._id === updated._id);
-      if (index > -1) {
-        this.products[index] = updated;
+    this.farmService.updateProduct(this.editingProduct._id, updatedPayload).subscribe({
+      next: updated => {
+        const index = this.products.findIndex(p => p._id === updated._id);
+        if (index > -1) {
+          this.products[index] = updated;
+          this.products = [...this.products]; // Force UI refresh
+        }
+        this.editingProduct = null;
+      },
+      error: err => console.error('Error updating product:', err)
+    });
+  }
 
-        // ✅ Force Angular change detection to refresh UI
-        this.products = [...this.products];
-      }
-      this.editingProduct = null;
-    },
-    error: err => console.error('Error updating product:', err)
-  });
-}
+  getCategoryName(category: any): string {
+    // Handle both object and string ID
+    if (typeof category === 'object' && category.name) return category.name;
 
-
-  getCategoryName(categoryId: string): string {
-    const cat = this.categories.find(c => c._id === categoryId);
-    return cat ? cat.name : 'Unknown';
+    const found = this.categories.find(c => c._id === category);
+    return found ? found.name : 'Unknown';
   }
 }

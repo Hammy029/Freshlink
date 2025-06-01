@@ -3,7 +3,7 @@
   <h2 class="text-lg font-semibold mb-4 text-gray-800">Add New Product</h2>
   <form (ngSubmit)="postProduct()" #addForm="ngForm" class="space-y-4" autocomplete="off">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Title -->
+      <!-- Product Title -->
       <div>
         <label for="title" class="block text-sm font-medium text-gray-700">Product Title</label>
         <input
@@ -15,7 +15,6 @@
           required
           class="mt-1 block w-full border rounded-md shadow-sm"
           [ngClass]="{ 'border-red-500': title.invalid && title.touched }"
-          title="Enter the product title"
         />
         <p *ngIf="title.invalid && title.touched" class="text-red-500 text-sm">Product title is required.</p>
       </div>
@@ -31,7 +30,6 @@
           required
           class="mt-1 block w-full border rounded-md shadow-sm"
           [ngClass]="{ 'border-red-500': category.invalid && category.touched }"
-          title="Choose a product category"
         >
           <option value="" disabled>Select category</option>
           <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
@@ -52,7 +50,6 @@
           required
           class="mt-1 block w-full border rounded-md shadow-sm"
           [ngClass]="{ 'border-red-500': quantity.invalid && quantity.touched }"
-          title="Enter the quantity"
         />
         <p *ngIf="quantity.invalid && quantity.touched" class="text-red-500 text-sm">Quantity is required.</p>
       </div>
@@ -71,13 +68,12 @@
           required
           class="mt-1 block w-full border rounded-md shadow-sm"
           [ngClass]="{ 'border-red-500': price.invalid && price.touched }"
-          title="Enter the product price"
         />
         <p *ngIf="price.invalid && price.touched" class="text-red-500 text-sm">Price is required.</p>
       </div>
     </div>
 
-    <!-- Description -->
+    <!-- Optional Description -->
     <div>
       <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
       <textarea
@@ -85,7 +81,7 @@
         name="description"
         rows="3"
         [(ngModel)]="product.description"
-        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+        class="mt-1 block w-full border rounded-md shadow-sm"
         placeholder="Optional"
       ></textarea>
     </div>
@@ -94,11 +90,11 @@
     <button
       type="submit"
       [disabled]="addForm.invalid"
+      class="text-white px-4 py-2 rounded"
       [ngClass]="{
         'bg-green-600 hover:bg-green-700': !addForm.invalid,
         'bg-gray-400 cursor-not-allowed': addForm.invalid
       }"
-      class="text-white px-4 py-2 rounded"
     >
       Add Product
     </button>
@@ -128,11 +124,11 @@
           <td class="px-4 py-2">{{ prod.price }}</td>
           <td class="px-4 py-2">
             <span
+              class="px-2 py-1 rounded text-xs"
               [ngClass]="{
                 'bg-green-100 text-green-600': prod.status === 'Available',
                 'bg-yellow-100 text-yellow-600': prod.status === 'Sold'
               }"
-              class="px-2 py-1 rounded text-xs"
             >
               {{ prod.status }}
             </span>
@@ -229,6 +225,7 @@
         </div>
       </div>
 
+      <!-- Optional Description -->
       <div>
         <label for="editDescription" class="block text-sm font-medium text-gray-700">Description</label>
         <textarea
@@ -240,6 +237,7 @@
         ></textarea>
       </div>
 
+      <!-- Buttons -->
       <div class="space-x-4">
         <button
           type="submit"
