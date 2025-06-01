@@ -4,6 +4,16 @@ import { FarmService } from '../../services/farm.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+interface ProductPayload {
+  title: string;
+  category: string;
+  quantity: number;
+  price: number;
+  description: string;
+  status?: 'Available' | 'Sold';
+  farm?: string;
+}
+
 @Component({
   selector: 'app-farmer',
   templateUrl: './userfarmer.component.html',
@@ -11,7 +21,7 @@ import { CommonModule } from '@angular/common';
   imports: [FormsModule, CommonModule]
 })
 export class UserfarmerComponent implements OnInit {
-  product = {
+  product: ProductPayload = {
     title: '',
     category: '',
     quantity: 0,
@@ -28,43 +38,43 @@ export class UserfarmerComponent implements OnInit {
     private farmService: FarmService
   ) {}
 
-  ngOnInit() {
-    this.fetchProducts();
-    this.loadCategories();
+  ngOnInit(): void {
+    this.loadCategoriesAndThenProducts();
   }
 
-  loadCategories() {
+  private loadCategoriesAndThenProducts(): void {
     this.categoryService.getCategories().subscribe({
-      next: (cats: Category[]) => this.categories = cats,
+      next: (cats: Category[]) => {
+        this.categories = cats;
+        this.fetchProducts();
+      },
       error: err => console.error('Error loading categories:', err)
     });
   }
 
-  fetchProducts() {
+  private fetchProducts(): void {
     this.farmService.getAllProducts().subscribe({
       next: (data: any[]) => {
         this.products = data.map(prod => ({
           ...prod,
-          status: prod.status || 'Available'  // Default status
+          status: prod.status || 'Available'
         }));
       },
       error: err => console.error('Error fetching products:', err)
     });
   }
 
-  postProduct() {
+  postProduct(): void {
     const farmerId = localStorage.getItem('userId');
     if (!farmerId) {
       console.error('Farmer ID not found in localStorage.');
       return;
     }
 
-    const payload = {
-      title: this.product.title,
-      description: this.product.description,
+    const payload: ProductPayload = {
+      ...this.product,
       price: Number(this.product.price),
       quantity: Number(this.product.quantity),
-      category: this.product.category,
       farm: farmerId,
       status: 'Available'
     };
@@ -72,13 +82,23 @@ export class UserfarmerComponent implements OnInit {
     this.farmService.addProduct(payload).subscribe({
       next: (res: any) => {
         this.products.unshift(res);
-        this.product = { title: '', category: '', quantity: 0, price: 0, description: '' };
+        this.resetForm();
       },
       error: err => console.error('Error posting product:', err)
     });
   }
 
-  markAsSold(id: string) {
+  private resetForm(): void {
+    this.product = {
+      title: '',
+      category: '',
+      quantity: 0,
+      price: 0,
+      description: ''
+    };
+  }
+
+  markAsSold(id: string): void {
     this.farmService.markAsSold(id).subscribe({
       next: () => {
         const item = this.products.find(p => p._id === id);
@@ -88,7 +108,7 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
-  deleteProduct(id: string) {
+  deleteProduct(id: string): void {
     this.farmService.deleteProduct(id).subscribe({
       next: () => {
         this.products = this.products.filter(p => p._id !== id);
@@ -97,18 +117,18 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
-  startEdit(prod: any) {
+  startEdit(prod: any): void {
     this.editingProduct = { ...prod };
   }
 
-  cancelEdit() {
+  cancelEdit(): void {
     this.editingProduct = null;
   }
 
-  updateProduct() {
+  updateProduct(): void {
     if (!this.editingProduct) return;
 
-    const updatedPayload = {
+    const updatedPayload: ProductPayload = {
       title: this.editingProduct.title,
       description: this.editingProduct.description,
       price: Number(this.editingProduct.price),
@@ -129,7 +149,6 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
-  // Returns category name by its id for display in product list
   getCategoryName(categoryId: string): string {
     const cat = this.categories.find(c => c._id === categoryId);
     return cat ? cat.name : 'Unknown';
