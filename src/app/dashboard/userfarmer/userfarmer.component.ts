@@ -125,29 +125,33 @@ export class UserfarmerComponent implements OnInit {
     this.editingProduct = null;
   }
 
-  updateProduct(): void {
-    if (!this.editingProduct) return;
+ updateProduct(): void {
+  if (!this.editingProduct) return;
 
-    const updatedPayload: ProductPayload = {
-      title: this.editingProduct.title,
-      description: this.editingProduct.description,
-      price: Number(this.editingProduct.price),
-      quantity: Number(this.editingProduct.quantity),
-      category: this.editingProduct.category,
-      status: this.editingProduct.status || 'Available'
-    };
+  const updatedPayload: ProductPayload = {
+    title: this.editingProduct.title,
+    description: this.editingProduct.description,
+    price: Number(this.editingProduct.price),
+    quantity: Number(this.editingProduct.quantity),
+    category: this.editingProduct.category,
+    status: this.editingProduct.status || 'Available'
+  };
 
-    this.farmService.updateProduct(this.editingProduct._id, updatedPayload).subscribe({
-      next: updated => {
-        const index = this.products.findIndex(p => p._id === updated._id);
-        if (index > -1) {
-          this.products[index] = updated;
-        }
-        this.editingProduct = null;
-      },
-      error: err => console.error('Error updating product:', err)
-    });
-  }
+  this.farmService.updateProduct(this.editingProduct._id, updatedPayload).subscribe({
+    next: updated => {
+      const index = this.products.findIndex(p => p._id === updated._id);
+      if (index > -1) {
+        this.products[index] = updated;
+
+        // ✅ Force Angular change detection to refresh UI
+        this.products = [...this.products];
+      }
+      this.editingProduct = null;
+    },
+    error: err => console.error('Error updating product:', err)
+  });
+}
+
 
   getCategoryName(categoryId: string): string {
     const cat = this.categories.find(c => c._id === categoryId);
