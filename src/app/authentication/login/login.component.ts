@@ -1,23 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AuthService } from '../../core/auth/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http'; // ✅ Add this
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [CommonModule, FormsModule, RouterLink, HttpClientModule], // ✅ Add HttpClientModule here
+  imports: [CommonModule, FormsModule, RouterLink, HttpClientModule],
 })
 export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string | null = null;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private ngZone: NgZone // ✅ For safe navigation
+  ) {}
 
   onSubmit(form: NgForm) {
     if (form.invalid) {
@@ -28,7 +32,15 @@ export class LoginComponent {
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (res) => {
-        this.router.navigate(['/dashboard']);
+        // ✅ Save access_token and userId to localStorage
+        localStorage.setItem('access_token', res.access_token);
+        localStorage.setItem('userId', res.user._id);
+
+
+        // ✅ Navigate inside NgZone to fix UI not updating
+        this.ngZone.run(() => {
+          this.router.navigate(['/dashboard']);
+        });
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Login failed. Please try again.';

@@ -6,6 +6,7 @@ import { tap } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
 
 interface LoginResponse {
+  user: any;
   access_token: string;
 }
 

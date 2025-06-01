@@ -16,6 +16,9 @@ export interface Farm {
   providedIn: 'root'
 })
 export class FarmService {
+  getCategories() {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'http://localhost:3000/farm'; // adjust accordingly
 
   constructor(private http: HttpClient) {}

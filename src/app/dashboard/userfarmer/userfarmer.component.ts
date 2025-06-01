@@ -7,11 +7,12 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-farmer',
   templateUrl: './userfarmer.component.html',
+  standalone: true,
   imports: [FormsModule, CommonModule]
 })
 export class UserfarmerComponent implements OnInit {
   product = {
-    name: '',
+    title: '',
     category: '',
     quantity: 0,
     price: 0,
@@ -34,28 +35,44 @@ export class UserfarmerComponent implements OnInit {
 
   loadCategories() {
     this.categoryService.getCategories().subscribe({
-      next: cats => this.categories = cats,
+      next: (cats: Category[]) => this.categories = cats,
       error: err => console.error('Error loading categories:', err)
     });
   }
 
   fetchProducts() {
     this.farmService.getAllProducts().subscribe({
-      next: data => this.products = data,
+      next: (data: any[]) => {
+        this.products = data.map(prod => ({
+          ...prod,
+          status: prod.status || 'Available'  // Default status
+        }));
+      },
       error: err => console.error('Error fetching products:', err)
     });
   }
 
   postProduct() {
+    const farmerId = localStorage.getItem('userId');
+    if (!farmerId) {
+      console.error('Farmer ID not found in localStorage.');
+      return;
+    }
+
     const payload = {
-      ...this.product,
+      title: this.product.title,
+      description: this.product.description,
+      price: Number(this.product.price),
+      quantity: Number(this.product.quantity),
+      category: this.product.category,
+      farm: farmerId,
       status: 'Available'
     };
 
     this.farmService.addProduct(payload).subscribe({
-      next: res => {
+      next: (res: any) => {
         this.products.unshift(res);
-        this.product = { name: '', category: '', quantity: 0, price: 0, description: '' };
+        this.product = { title: '', category: '', quantity: 0, price: 0, description: '' };
       },
       error: err => console.error('Error posting product:', err)
     });
@@ -91,13 +108,30 @@ export class UserfarmerComponent implements OnInit {
   updateProduct() {
     if (!this.editingProduct) return;
 
-    this.farmService.updateProduct(this.editingProduct._id, this.editingProduct).subscribe({
+    const updatedPayload = {
+      title: this.editingProduct.title,
+      description: this.editingProduct.description,
+      price: Number(this.editingProduct.price),
+      quantity: Number(this.editingProduct.quantity),
+      category: this.editingProduct.category,
+      status: this.editingProduct.status || 'Available'
+    };
+
+    this.farmService.updateProduct(this.editingProduct._id, updatedPayload).subscribe({
       next: updated => {
         const index = this.products.findIndex(p => p._id === updated._id);
-        if (index > -1) this.products[index] = updated;
+        if (index > -1) {
+          this.products[index] = updated;
+        }
         this.editingProduct = null;
       },
       error: err => console.error('Error updating product:', err)
     });
+  }
+
+  // Returns category name by its id for display in product list
+  getCategoryName(categoryId: string): string {
+    const cat = this.categories.find(c => c._id === categoryId);
+    return cat ? cat.name : 'Unknown';
   }
 }
