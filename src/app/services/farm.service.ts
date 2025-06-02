@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,27 +10,45 @@ export class FarmService {
 
   constructor(private http: HttpClient) {}
 
-  // Get all products
-  getAllProducts(): Observable<any[]> {
-    return this.http.get<any[]>(this.baseUrl);
+  // Helper method to include Authorization header
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('access_token');
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
   }
 
-  // Add new product
+  getAllProductsAdmin(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/admin-products`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getMyProducts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/my-products`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
   addProduct(product: any): Observable<any> {
-    return this.http.post<any>(this.baseUrl, product);
+    return this.http.post<any>(this.baseUrl, product, {
+      headers: this.getAuthHeaders()
+    });
   }
 
-  // Update product
   updateProduct(id: string, updatedData: any): Observable<any> {
-    return this.http.patch<any>(`${this.baseUrl}/${id}`, updatedData);
+    return this.http.patch<any>(`${this.baseUrl}/${id}`, updatedData, {
+      headers: this.getAuthHeaders()
+    });
   }
 
-  // Delete product
   deleteProduct(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.baseUrl}/${id}`);
+    return this.http.delete<any>(`${this.baseUrl}/${id}`, {
+      headers: this.getAuthHeaders()
+    });
   }
 
-  // Mark product as sold
   markAsSold(id: string): Observable<any> {
     return this.updateProduct(id, { status: 'Sold' });
   }

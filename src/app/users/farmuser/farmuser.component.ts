@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Category, UsercategoryService } from '../../services/usercategory.service';
-import { FarmService } from '../../services/farm.service';
+//import { FarmService } from '../../services/farm.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FarmeruserService } from '../../services/farmeruser.service';
 
 interface ProductPayload {
   title: string;
@@ -15,12 +16,19 @@ interface ProductPayload {
 }
 
 @Component({
-  selector: 'app-farmer',
-  templateUrl: './userfarmer.component.html',
+  selector: 'app-farmuser',
+  templateUrl: './farmuser.component.html',
+  styleUrls: ['./farmuser.component.css'],
   standalone: true,
   imports: [FormsModule, CommonModule]
 })
-export class UserfarmerComponent implements OnInit {
+export class FarmuserComponent implements OnInit {
+addProduct() {
+throw new Error('Method not implemented.');
+}
+toggleStatus(_t83: any) {
+throw new Error('Method not implemented.');
+}
   product: ProductPayload = {
     title: '',
     category: '',
@@ -32,54 +40,48 @@ export class UserfarmerComponent implements OnInit {
   products: any[] = [];
   categories: Category[] = [];
   editingProduct: any = null;
-  isAdmin: boolean = false; // <-- Track admin role
 
   constructor(
     private categoryService: UsercategoryService,
-    private farmService: FarmService
+    private farmeruserService: FarmeruserService
   ) {}
 
   ngOnInit(): void {
-    // Determine user role (assuming you store it in localStorage)
-    const role = localStorage.getItem('role'); 
-    this.isAdmin = role === 'Admin'; // Adjust if you use different casing/role string
-
-    this.loadCategoriesAndThenProducts();
+    this.loadCategoriesAndProducts();
   }
 
-  private loadCategoriesAndThenProducts(): void {
+  private loadCategoriesAndProducts(): void {
     this.categoryService.getCategories().subscribe({
       next: (cats: Category[]) => {
         this.categories = cats;
-        this.fetchProducts();
+        this.fetchUserProducts();
       },
       error: err => console.error('Error loading categories:', err)
     });
   }
 
-  private fetchProducts(): void {
-    // Use role-based product fetching
-    const productsObservable = this.isAdmin
-      ? this.farmService.getAllProductsAdmin() // Admin: get all products
-      : this.farmService.getMyProducts();       // User: get own products
+  private fetchUserProducts(): void {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.error('User ID not found in localStorage.');
+      return;
+    }
 
-    productsObservable.subscribe({
+    this.farmeruserService.getProductsByUser(userId).subscribe({
       next: (data: any[]) => {
-        console.log('Fetched products:', data);
-
         this.products = data.map(prod => ({
           ...prod,
           status: prod.status || 'Available'
         }));
       },
-      error: err => console.error('Error fetching products:', err)
+      error: (err: any) => console.error('Error fetching user products:', err)
     });
   }
 
   postProduct(): void {
-    const farmerId = localStorage.getItem('userId');
-    if (!farmerId) {
-      console.error('Farmer ID not found in localStorage.');
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.error('User ID not found in localStorage.');
       return;
     }
 
@@ -87,11 +89,11 @@ export class UserfarmerComponent implements OnInit {
       ...this.product,
       price: Number(this.product.price),
       quantity: Number(this.product.quantity),
-      farm: farmerId,
+      farm: userId,
       status: 'Available'
     };
 
-    this.farmService.addProduct(payload).subscribe({
+    this.farmeruserService.addProduct(payload).subscribe({
       next: (res: any) => {
         this.products.unshift(res);
         this.resetForm();
@@ -100,7 +102,7 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
-  private resetForm(): void {
+  resetForm(): void {
     this.product = {
       title: '',
       category: '',
@@ -108,25 +110,6 @@ export class UserfarmerComponent implements OnInit {
       price: 0,
       description: ''
     };
-  }
-
-  markAsSold(id: string): void {
-    this.farmService.markAsSold(id).subscribe({
-      next: () => {
-        const item = this.products.find(p => p._id === id);
-        if (item) item.status = 'Sold';
-      },
-      error: err => console.error('Error marking as sold:', err)
-    });
-  }
-
-  deleteProduct(id: string): void {
-    this.farmService.deleteProduct(id).subscribe({
-      next: () => {
-        this.products = this.products.filter(p => p._id !== id);
-      },
-      error: err => console.error('Error deleting product:', err)
-    });
   }
 
   startEdit(prod: any): void {
@@ -149,12 +132,12 @@ export class UserfarmerComponent implements OnInit {
       status: this.editingProduct.status || 'Available'
     };
 
-    this.farmService.updateProduct(this.editingProduct._id, updatedPayload).subscribe({
+    this.farmeruserService.updateProduct(this.editingProduct._id, updatedPayload).subscribe({
       next: updated => {
         const index = this.products.findIndex(p => p._id === updated._id);
         if (index > -1) {
           this.products[index] = updated;
-          this.products = [...this.products]; // Force UI refresh
+          this.products = [...this.products]; // trigger UI refresh
         }
         this.editingProduct = null;
       },
@@ -162,10 +145,27 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
-  getCategoryName(category: any): string {
-    if (typeof category === 'object' && category.name) return category.name;
+  deleteProduct(id: string): void {
+    this.farmeruserService.deleteProduct(id).subscribe({
+      next: () => {
+        this.products = this.products.filter(p => p._id !== id);
+      },
+      error: err => console.error('Error deleting product:', err)
+    });
+  }
 
-    const found = this.categories.find(c => c._id === category);
-    return found ? found.name : 'Unknown';
+  markAsSold(id: string): void {
+    this.farmeruserService.markAsSold(id).subscribe({
+      next: () => {
+        const item = this.products.find(p => p._id === id);
+        if (item) item.status = 'Sold';
+      },
+      error: (err: any) => console.error('Error marking as sold:', err)
+    });
+  }
+
+  getCategoryName(categoryId: string): string {
+    const cat = this.categories.find(c => c._id === categoryId);
+    return cat ? cat.name : 'Unknown';
   }
 }
