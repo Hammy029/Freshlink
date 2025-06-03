@@ -80,6 +80,20 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         title: 'Category',
         data: { roles: ['admin'] }
+      },
+       {
+        path: 'userorder',
+        component: UserorderComponent,
+        canActivate: [AuthGuard],
+        title: 'User Orders',
+        data: { roles: ['user', 'admin'] }
+      },
+      {
+        path: 'userorder/:id',
+        component: UserorderComponent,
+        canActivate: [AuthGuard],
+        title: 'User Order Details',
+        data: { roles: ['user', 'admin'] }
       }
     ]
   },
@@ -98,21 +112,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         title: 'Farm User',
         data: { roles: ['user', 'admin'] }
-      },
-      {
-  path: 'userorder',
-  component: UserorderComponent,
-  canActivate: [AuthGuard],
-  title: 'User Orders',
-  data: { roles: ['user', 'admin'] }
-},
-{
-  path: 'userorder/:id',
-  component: UserorderComponent,
-  canActivate: [AuthGuard],
-  title: 'User Order Details',
-  data: { roles: ['user', 'admin'] }
-}
+      }
+     
     ]
   },
 

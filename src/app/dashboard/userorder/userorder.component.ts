@@ -7,45 +7,50 @@ import { UserorderService } from '../../services/userorder.service';
 @Component({
   selector: 'app-userorder',
   templateUrl: './userorder.component.html',
-  imports:[CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   styleUrls: ['./userorder.component.css']
 })
 export class UserorderComponent implements OnInit {
   product: any = null;
   order: any = { quantity: 1, notes: '' };
-  orders: any[] = []; // existing user orders
-  editingOrderId: string | null = null; // track if editing
-  productService: any;
+  orders: any[] = [];
+  editingOrderId: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private userorderService: UserorderService,
-    private orderService: UserorderService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Get product id from route if any
-    const productId = this.route.snapshot.paramMap.get('id');
-    if (productId) {
-      this.loadProduct(productId);
+    // Load product from sessionStorage if available
+    const storedProduct = sessionStorage.getItem('selectedProduct');
+    if (storedProduct) {
+      this.product = JSON.parse(storedProduct);
+      this.order.productId = this.product._id;
     }
+
+    // Fallback: load product from query parameters
+    this.route.queryParams.subscribe(params => {
+      if (params['productId']) {
+        this.product = {
+          _id: params['productId'],
+          name: params['title'],
+          price: params['price'],
+          quantity: params['quantity'],
+          category: params['category']
+        };
+        this.order.productId = this.product._id;
+        // Save to sessionStorage for later use
+        sessionStorage.setItem('selectedProduct', JSON.stringify(this.product));
+      }
+    });
+
     this.loadUserOrders();
   }
 
-  loadProduct(id: string): void {
-    this.productService.getProductById(id).subscribe({
-      next: (data: any) => (this.product = data),
-      error: (err: any) => {
-        console.error('Failed to load product', err);
-        alert('Product not found');
-        this.router.navigate(['/dashboard/userorder']);
-      }
-    });
-  }
-
   loadUserOrders(): void {
-    this.orderService.getUserOrders().subscribe({
+    this.userorderService.getUserOrders().subscribe({
       next: (data: any[]) => (this.orders = data),
       error: (err: any) => console.error('Failed to load orders', err)
     });
@@ -65,8 +70,7 @@ export class UserorderComponent implements OnInit {
     };
 
     if (this.editingOrderId) {
-      // Edit existing order
-      this.orderService.updateOrder(this.editingOrderId, orderData).subscribe({
+      this.userorderService.updateOrder(this.editingOrderId, orderData).subscribe({
         next: () => {
           alert('Order updated successfully!');
           this.resetForm();
@@ -78,8 +82,7 @@ export class UserorderComponent implements OnInit {
         }
       });
     } else {
-      // Place new order
-      this.orderService.placeOrder(orderData).subscribe({
+      this.userorderService.placeOrder(orderData).subscribe({
         next: () => {
           alert('Order placed successfully!');
           this.resetForm();
@@ -97,12 +100,23 @@ export class UserorderComponent implements OnInit {
     this.editingOrderId = order._id;
     this.order.quantity = order.quantity;
     this.order.notes = order.notes;
-    this.loadProduct(order.productId);
+
+    // Populate product locally without reload
+    this.product = {
+      _id: order.productId,
+      name: order.productName ?? 'Product',
+      price: order.price ?? 0,
+      quantity: order.quantity,
+      category: order.category ?? ''
+    };
+
+    this.order.productId = this.product._id;
+    sessionStorage.setItem('selectedProduct', JSON.stringify(this.product));
   }
 
   cancelOrder(orderId: string): void {
     if (confirm('Are you sure you want to cancel this order?')) {
-      this.orderService.cancelOrder(orderId).subscribe({
+      this.userorderService.cancelOrder(orderId).subscribe({
         next: () => {
           alert('Order canceled successfully!');
           this.loadUserOrders();
@@ -122,6 +136,7 @@ export class UserorderComponent implements OnInit {
     this.editingOrderId = null;
     this.product = null;
     this.order = { quantity: 1, notes: '' };
-    this.router.navigate(['/dashboard/userorder']); // Clear product id param if any
+    sessionStorage.removeItem('selectedProduct');
+    this.router.navigate(['/dashboard/userorder']);
   }
 }
