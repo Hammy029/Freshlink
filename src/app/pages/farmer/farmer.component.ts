@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-//import { FarmService } from '../services/farm.service';  // Adjust path as needed
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FarmService } from '../../services/farm.service';
 import { CommonModule } from '@angular/common';
@@ -8,13 +8,13 @@ import { CommonModule } from '@angular/common';
   selector: 'app-farmer',
   templateUrl: './farmer.component.html',
   imports: [CommonModule, FormsModule],
-  styleUrls: ['./farmer.component.css']  // Fixed typo here from styleUrl to styleUrls
+  styleUrls: ['./farmer.component.css']
 })
 export class FarmerComponent implements OnInit {
   products: any[] = [];
   errorMessage = '';
 
-  constructor(private farmService: FarmService) {}
+  constructor(private farmService: FarmService, private router: Router) {}
 
   ngOnInit() {
     this.loadProducts();
@@ -32,9 +32,8 @@ export class FarmerComponent implements OnInit {
     });
   }
 
-  // Example stub for placing order, integrate your order service here later
-  placeOrder(productId: string, quantity: number) {
-    console.log(`Order placed for product ${productId} with quantity ${quantity}`);
-    // TODO: Call OrderService to actually create order
+  redirectToOrderForm(productId: string) {
+    // Navigate to user order form with productId param
+    this.router.navigate(['dashboard/userorder', productId]);
   }
 }

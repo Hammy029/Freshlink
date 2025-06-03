@@ -24,6 +24,7 @@ import { ServicesComponent } from "./pages/services/services.component";
 import { VendorComponent } from "./pages/vendor/vendor.component";
 import { FarmuserComponent } from "./users/farmuser/farmuser.component";
 import { UsersComponent } from "./users/users.component";
+import { UserorderComponent } from "./dashboard/userorder/userorder.component";
 
 export const routes: Routes = [
   // Public Pages
@@ -97,7 +98,21 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         title: 'Farm User',
         data: { roles: ['user', 'admin'] }
-      }
+      },
+      {
+  path: 'userorder',
+  component: UserorderComponent,
+  canActivate: [AuthGuard],
+  title: 'User Orders',
+  data: { roles: ['user', 'admin'] }
+},
+{
+  path: 'userorder/:id',
+  component: UserorderComponent,
+  canActivate: [AuthGuard],
+  title: 'User Order Details',
+  data: { roles: ['user', 'admin'] }
+}
     ]
   },
 

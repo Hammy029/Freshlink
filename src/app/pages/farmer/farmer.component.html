@@ -110,7 +110,7 @@
           class="border border-gray-300 p-1 rounded-md w-20 text-center text-sm"
         />
         <button
-          (click)="placeOrder(product._id, product.orderQuantity)"
+          (click)="redirectToOrderForm(product._id)"
           [disabled]="
             !product.orderQuantity ||
             product.orderQuantity < 1 ||
@@ -122,5 +122,5 @@
         </button>
       </div>
     </div>
-  </div>
+  </div>  
 </div>
