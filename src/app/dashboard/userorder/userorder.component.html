@@ -1,0 +1,72 @@
+<div class="container mx-auto p-4">
+  <h2 class="text-2xl font-bold mb-6">User Orders</h2>
+
+  <!-- Product Details -->
+  <div *ngIf="product" class="bg-white shadow-md rounded p-4 mb-6 border border-blue-200">
+    <h3 class="text-lg font-semibold text-blue-700 mb-2">Selected Product</h3>
+    <p><strong>Name:</strong> {{ product.name }}</p>
+    <p><strong>Category:</strong> {{ product.category || 'N/A' }}</p>
+    <p><strong>Available Quantity:</strong> {{ product.quantity }}</p>
+    <p><strong>Price:</strong> KES {{ product.price }}</p>
+  </div>
+
+  <!-- Order Form -->
+  <div *ngIf="product" class="bg-gray-100 border border-gray-300 rounded p-4 mb-6">
+    <h3 class="text-lg font-semibold mb-4 text-gray-700">
+      {{ editingOrderId ? 'Edit Order' : 'Place New Order' }}
+    </h3>
+
+    <form (ngSubmit)="submitOrder()" class="space-y-4">
+      <div>
+        <label class="block font-medium text-gray-700">Quantity</label>
+        <input type="number" [(ngModel)]="order.quantity" name="quantity" min="1"
+               class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" required />
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-700">Notes (optional)</label>
+        <textarea [(ngModel)]="order.notes" name="notes" rows="2"
+                  class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+          {{ editingOrderId ? 'Update Order' : 'Submit Order' }}
+        </button>
+        <button type="button" (click)="resetForm()"
+                class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Orders List -->
+  <div class="bg-white shadow-md rounded p-4 border border-gray-200">
+    <h3 class="text-lg font-semibold mb-4 text-gray-800">Your Orders</h3>
+
+    <div *ngIf="orders.length === 0" class="text-gray-500 italic">You haven't placed any orders yet.</div>
+
+    <ul *ngIf="orders.length > 0" class="divide-y divide-gray-200">
+      <li *ngFor="let ord of orders" class="py-4">
+        <div>
+          <p><strong>Product ID:</strong> {{ ord.productId }}</p>
+          <p><strong>Quantity:</strong> {{ ord.quantity }}</p>
+          <p><strong>Notes:</strong> {{ ord.notes || 'None' }}</p>
+        </div>
+
+        <div class="mt-3 flex gap-3">
+          <button (click)="editOrder(ord)"
+                  class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition-colors">
+            Edit
+          </button>
+          <button (click)="cancelOrder(ord._id)"
+                  class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-colors">
+            Cancel
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

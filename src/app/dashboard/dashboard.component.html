@@ -1,0 +1,87 @@
+<div class="flex min-h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white shadow-md p-4 space-y-6 hidden md:block">
+    <div class="text-2xl font-bold text-blue-600">Dashboard</div>
+    <nav class="flex flex-col space-y-4 text-gray-700">
+      <a routerLink="/dashboard" routerLinkActive="text-blue-600" class="hover:text-blue-600">Home</a>
+      <a routerLink="/dashboard/userfarmer" routerLinkActive="text-blue-600" class="hover:text-blue-600">User Farmer</a>
+      <a routerLink="/dashboard/uservendor" routerLinkActive="text-blue-600" class="hover:text-blue-600">User Vendor</a>
+      <a routerLink="/services" class="hover:text-blue-600">Services</a>
+      <a routerLink="/dashboard/userorder" class="hover:text-blue-600">Orders</a>
+      <a routerLink="/dashboard/usercategory" class="hover:text-blue-600">Categories</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col">
+    <!-- Topbar -->
+    <header class="bg-white shadow flex items-center justify-between px-6 py-4">
+      <div class="text-lg font-semibold">Welcome to Dashboard</div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600">Hello, Admin</span>
+        <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Logout</button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="p-6 space-y-6">
+      <router-outlet></router-outlet>
+
+      <!-- Optional Default Dashboard Stats (only show on base dashboard route) -->
+      <div *ngIf="true" class="space-y-6">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-white p-4 rounded-xl shadow-md">
+            <h3 class="text-gray-500">Total Users</h3>
+            <p class="text-2xl font-semibold text-blue-600">1,243</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl shadow-md">
+            <h3 class="text-gray-500">Active Reports</h3>
+            <p class="text-2xl font-semibold text-red-500">53</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl shadow-md">
+            <h3 class="text-gray-500">Pending Tasks</h3>
+            <p class="text-2xl font-semibold text-yellow-500">12</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl shadow-md">
+            <h3 class="text-gray-500">System Uptime</h3>
+            <p class="text-2xl font-semibold text-green-600">99.98%</p>
+          </div>
+        </div>
+
+        <!-- Recent Activity Table -->
+        <div class="bg-white p-6 rounded-xl shadow-md">
+          <h2 class="text-xl font-semibold mb-4">Recent User Activity</h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full text-left text-sm text-gray-700">
+              <thead class="border-b font-medium bg-gray-50">
+                <tr>
+                  <th class="px-4 py-2">User</th>
+                  <th class="px-4 py-2">Activity</th>
+                  <th class="px-4 py-2">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b">
+                  <td class="px-4 py-2">Jane Doe</td>
+                  <td class="px-4 py-2">Logged in</td>
+                  <td class="px-4 py-2">2025-05-28</td>
+                </tr>
+                <tr class="border-b">
+                  <td class="px-4 py-2">John Smith</td>
+                  <td class="px-4 py-2">Submitted report</td>
+                  <td class="px-4 py-2">2025-05-27</td>
+                </tr>
+                <tr class="border-b">
+                  <td class="px-4 py-2">Alice Kim</td>
+                  <td class="px-4 py-2">Changed password</td>
+                  <td class="px-4 py-2">2025-05-27</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>

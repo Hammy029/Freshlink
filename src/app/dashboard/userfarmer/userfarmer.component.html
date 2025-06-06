@@ -1,0 +1,259 @@
+<!-- Add New Product Form -->
+<div class="bg-white p-6 rounded-xl shadow-md mb-8 max-w-3xl mx-auto">
+  <h2 class="text-lg font-semibold mb-4 text-gray-800">Add New Product</h2>
+  <form (ngSubmit)="postProduct()" #addForm="ngForm" class="space-y-4" autocomplete="off">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Product Title -->
+      <div>
+        <label for="title" class="block text-sm font-medium text-gray-700">Product Title</label>
+        <input
+          id="title"
+          name="title"
+          type="text"
+          [(ngModel)]="product.title"
+          #title="ngModel"
+          required
+          class="mt-1 block w-full border rounded-md shadow-sm"
+          [ngClass]="{ 'border-red-500': title.invalid && title.touched }"
+        />
+        <p *ngIf="title.invalid && title.touched" class="text-red-500 text-sm">Product title is required.</p>
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+        <select
+          id="category"
+          name="category"
+          [(ngModel)]="product.category"
+          #category="ngModel"
+          required
+          class="mt-1 block w-full border rounded-md shadow-sm"
+          [ngClass]="{ 'border-red-500': category.invalid && category.touched }"
+        >
+          <option value="" disabled>Select category</option>
+          <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
+        </select>
+        <p *ngIf="category.invalid && category.touched" class="text-red-500 text-sm">Category is required.</p>
+      </div>
+
+      <!-- Quantity -->
+      <div>
+        <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+        <input
+          id="quantity"
+          name="quantity"
+          type="number"
+          min="1"
+          [(ngModel)]="product.quantity"
+          #quantity="ngModel"
+          required
+          class="mt-1 block w-full border rounded-md shadow-sm"
+          [ngClass]="{ 'border-red-500': quantity.invalid && quantity.touched }"
+        />
+        <p *ngIf="quantity.invalid && quantity.touched" class="text-red-500 text-sm">Quantity is required.</p>
+      </div>
+
+      <!-- Price -->
+      <div>
+        <label for="price" class="block text-sm font-medium text-gray-700">Price (Ksh)</label>
+        <input
+          id="price"
+          name="price"
+          type="number"
+          min="0"
+          step="0.01"
+          [(ngModel)]="product.price"
+          #price="ngModel"
+          required
+          class="mt-1 block w-full border rounded-md shadow-sm"
+          [ngClass]="{ 'border-red-500': price.invalid && price.touched }"
+        />
+        <p *ngIf="price.invalid && price.touched" class="text-red-500 text-sm">Price is required.</p>
+      </div>
+    </div>
+
+    <!-- Optional Description -->
+    <div>
+      <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        rows="3"
+        [(ngModel)]="product.description"
+        class="mt-1 block w-full border rounded-md shadow-sm"
+        placeholder="Optional"
+      ></textarea>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      [disabled]="addForm.invalid"
+      class="text-white px-4 py-2 rounded"
+      [ngClass]="{
+        'bg-green-600 hover:bg-green-700': !addForm.invalid,
+        'bg-gray-400 cursor-not-allowed': addForm.invalid
+      }"
+    >
+      Add Product
+    </button>
+  </form>
+</div>
+
+<!-- Product List Table -->
+<div class="bg-white p-6 rounded-xl shadow-md">
+  <h2 class="text-lg font-semibold mb-4 text-gray-800">Your Products</h2>
+  <div class="overflow-x-auto">
+    <table class="min-w-full text-left text-sm text-gray-700">
+      <thead class="border-b font-medium bg-gray-50">
+        <tr>
+          <th class="px-4 py-2">Title</th>
+          <th class="px-4 py-2">Category</th>
+          <th class="px-4 py-2">Qty</th>
+          <th class="px-4 py-2">Price</th>
+          <th class="px-4 py-2">Status</th>
+          <th class="px-4 py-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prod of products" class="border-b hover:bg-gray-50">
+          <td class="px-4 py-2">{{ prod.title }}</td>
+          <td class="px-4 py-2">{{ getCategoryName(prod.category) }}</td>
+          <td class="px-4 py-2">{{ prod.quantity }}</td>
+          <td class="px-4 py-2">{{ prod.price }}</td>
+          <td class="px-4 py-2">
+            <span
+              class="px-2 py-1 rounded text-xs"
+              [ngClass]="{
+                'bg-green-100 text-green-600': prod.status === 'Available',
+                'bg-yellow-100 text-yellow-600': prod.status === 'Sold'
+              }"
+            >
+              {{ prod.status }}
+            </span>
+          </td>
+          <td class="px-4 py-2 space-x-2">
+            <button
+              class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+              (click)="startEdit(prod)"
+              [disabled]="editingProduct && editingProduct._id === prod._id"
+              title="Edit this product"
+            >
+              Edit
+            </button>
+            <button
+              class="px-3 py-1 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
+              (click)="markAsSold(prod._id)"
+              [disabled]="prod.status === 'Sold'"
+              title="Mark product as sold"
+            >
+              Mark Sold
+            </button>
+            <button
+              class="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600"
+              (click)="deleteProduct(prod._id)"
+              title="Delete this product"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="products.length === 0">
+          <td colspan="6" class="text-center py-4 text-gray-500">No products found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Update Product Form -->
+  <div *ngIf="editingProduct" class="mt-8 bg-gray-50 p-6 rounded-xl shadow max-w-3xl mx-auto">
+    <h3 class="text-xl font-semibold mb-4 text-gray-800">Update Product</h3>
+    <form (ngSubmit)="updateProduct()" #updateForm="ngForm" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="editTitle" class="block text-sm font-medium text-gray-700">Product Title</label>
+          <input
+            id="editTitle"
+            name="title"
+            type="text"
+            [(ngModel)]="editingProduct.title"
+            required
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        <div>
+          <label for="editCategory" class="block text-sm font-medium text-gray-700">Category</label>
+          <select
+            id="editCategory"
+            name="category"
+            [(ngModel)]="editingProduct.category"
+            required
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="" disabled>Select category</option>
+            <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="editQuantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+          <input
+            id="editQuantity"
+            name="quantity"
+            type="number"
+            min="1"
+            [(ngModel)]="editingProduct.quantity"
+            required
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        <div>
+          <label for="editPrice" class="block text-sm font-medium text-gray-700">Price (Ksh)</label>
+          <input
+            id="editPrice"
+            name="price"
+            type="number"
+            min="0"
+            step="0.01"
+            [(ngModel)]="editingProduct.price"
+            required
+            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+      </div>
+
+      <!-- Optional Description -->
+      <div>
+        <label for="editDescription" class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+          id="editDescription"
+          name="description"
+          rows="3"
+          [(ngModel)]="editingProduct.description"
+          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
+        ></textarea>
+      </div>
+
+      <!-- Buttons -->
+      <div class="space-x-4">
+        <button
+          type="submit"
+          [disabled]="updateForm.invalid"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Update Product
+        </button>
+        <button
+          type="button"
+          class="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+          (click)="cancelEdit()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
