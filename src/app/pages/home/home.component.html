@@ -1,26 +1,118 @@
-<div class="min-h-screen bg-green-50 flex flex-col items-center justify-center px-6 py-12">
+<!-- home.component.html -->
+<div class="min-h-screen bg-cover bg-center bg-no-repeat" 
+     style="background-image: url('assets/farmmix.jpg');">
+  
+  <!-- Semi-transparent overlay -->
+  <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+  
+  <!-- Main content container -->
+  <div class="relative z-10 flex flex-col min-h-screen">
+    
+    <!-- Welcome Section -->
+    <section class="flex-grow flex items-center justify-center text-center px-4 text-white py-20">
+      <div class="max-w-3xl mx-auto">
+        <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fadeIn">Welcome to FreshLink</h1>
+        <p class="text-xl md:text-2xl mb-10">
+          Kenya's premier platform connecting small-scale farmers directly with local vendors
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <button class="px-8 py-3 bg-green-600 rounded-lg hover:bg-green-700 transition transform hover:scale-105">
+            I'm a Farmer
+          </button>
+          <button class="px-8 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 transition transform hover:scale-105">
+            I'm a Vendor
+          </button>
+        </div>
+      </div>
+    </section>
 
-  <!-- Welcome Title -->
-  <h1 class="text-4xl font-bold text-green-800 mb-4 text-center">Welcome to FreshLink</h1>
-  <p class="text-gray-600 text-center max-w-xl mb-8">
-    Bridging the gap between smallholder farmers and vegetable vendors (mama mbogas). Buy fresh produce directly, affordably, and transparently.
-  </p>
+    <!-- Farmer/Vendor Sections -->
+    <div class="bg-white bg-opacity-90 backdrop-blur-sm py-16">
+      <div class="max-w-6xl mx-auto px-4">
+        
+        <!-- Farmer Section -->
+        <section class="mb-20">
+          <div class="flex flex-col md:flex-row items-center gap-10">
+            <div class="md:w-1/2">
+              <h2 class="text-3xl font-bold text-green-700 mb-6">For Farmers</h2>
+              <ul class="space-y-4 text-gray-700">
+                <li class="flex items-start">
+                  <svg class="w-6 h-6 text-green-600 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Sell your produce directly to vendors at fair prices</span>
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-6 h-6 text-green-600 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>No middlemen - keep more of your profits</span>
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-6 h-6 text-green-600 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Instant payments via M-Pesa</span>
+                </li>
+              </ul>
+              <button class="mt-8 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                Learn More for Farmers →
+              </button>
+            </div>
+            <div class="md:w-1/2">
+              <img src="assets/images/farmmix.jpg" alt="Farmer" class="rounded-lg shadow-xl">
+            </div>
+          </div>
+        </section>
 
-  <!-- Action Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
-    <!-- Vendor Card -->
-    <a routerLink="/vendor-login"
-       class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg border hover:border-green-500 transition">
-      <h2 class="text-xl font-semibold text-green-700">I'm a Vendor</h2>
-      <p class="text-gray-500 mt-2">Browse and order fresh produce for your business.</p>
-    </a>
+        <!-- Vendor Section -->
+        <section>
+          <div class="flex flex-col md:flex-row-reverse items-center gap-10">
+            <div class="md:w-1/2">
+              <h2 class="text-3xl font-bold text-blue-700 mb-6">For Vendors (Mama Mbogas)</h2>
+              <ul class="space-y-4 text-gray-700">
+                <li class="flex items-start">
+                  <svg class="w-6 h-6 text-blue-600 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Source fresh produce directly from local farmers</span>
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-6 h-6 text-blue-600 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Competitive prices without broker fees</span>
+                </li>
+                <li class="flex items-start">
+                  <svg class="w-6 h-6 text-blue-600 mr-2 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                  <span>Reliable supply with delivery options</span>
+                </li>
+              </ul>
+              <button class="mt-8 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                Learn More for Vendors →
+              </button>
+            </div>
+            <div class="md:w-1/2">
+              <img src="assets/images/vendor.jpg" alt="Vendor" class="rounded-lg shadow-xl">
+            </div>
+          </div>
+        </section>
 
-    <!-- Farmer Card -->
-    <a routerLink="/farmer-login"
-       class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg border hover:border-green-500 transition">
-      <h2 class="text-xl font-semibold text-green-700">I'm a Farmer</h2>
-      <p class="text-gray-500 mt-2">List your farm produce and reach more vendors.</p>
-    </a>
+      </div>
+    </div>
+
+    <!-- Simple CTA Section -->
+    <section class="bg-green-700 text-white py-12 text-center">
+      <div class="max-w-4xl mx-auto px-4">
+        <h2 class="text-2xl md:text-3xl font-bold mb-6">Ready to join Kenya's fresh produce revolution?</h2>
+        <p class="text-lg mb-8">Sign up today and experience the future of farm-to-market connections</p>
+        <button class="px-8 py-3 bg-white text-green-700 rounded-lg hover:bg-gray-100 font-semibold transition">
+          Get Started Now
+        </button>
+      </div>
+    </section>
+
   </div>
-
 </div>
