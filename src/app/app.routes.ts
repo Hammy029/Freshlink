@@ -24,8 +24,7 @@ import { PaymentComponent } from "./pages/payment/payment.component";
 import { ProduceComponent } from "./pages/produce/produce.component";
 import { ServicesComponent } from "./pages/services/services.component";
 import { VendorComponent } from "./pages/vendor/vendor.component";
-import { FarmuserComponent } from "./users/farmuser/farmuser.component";
-import { UsersComponent } from "./users/users.component";
+import { FarmuserComponent } from "./Admin/admin/farmuser/farmuser.component";
 
 export const routes: Routes = [
   // Public Pages
@@ -61,7 +60,6 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['user', 'admin'] },
     children: [
-      { path: '', pathMatch: 'full', component: DashboardComponent },
       {
         path: 'userfarmer',
         component: UserfarmerComponent,
@@ -82,6 +80,13 @@ export const routes: Routes = [
         title: 'User Order Details',
         canActivate: [AuthGuard],
         data: { roles: ['user', 'admin'] }
+      },
+      {
+        path: 'uservendor',
+        component: UservendorComponent,
+        title: 'User Vendor',
+        canActivate: [AuthGuard],
+        data: { roles: ['admin'] }
       }
     ]
   },
@@ -101,29 +106,11 @@ export const routes: Routes = [
         data: { roles: ['admin'] }
       },
       {
-        path: 'uservendor',
-        component: UservendorComponent,
-        title: 'User Vendor',
-        canActivate: [AuthGuard],
-        data: { roles: ['admin'] }
-      }
-    ]
-  },
-
-  // Users
-  {
-    path: 'users',
-    title: 'Users',
-    component: UsersComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['user', 'admin'] },
-    children: [
-      {
         path: 'farmuser',
         component: FarmuserComponent,
         title: 'Farm User',
         canActivate: [AuthGuard],
-        data: { roles: ['user', 'admin'] }
+        data: { roles: ['admin'] }
       }
     ]
   },

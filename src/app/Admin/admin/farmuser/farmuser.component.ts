@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Category, UsercategoryService } from '../../services/usercategory.service';
+import { Category, UsercategoryService } from '../../../services/usercategory.service';
 //import { FarmService } from '../../services/farm.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FarmeruserService } from '../../services/farmeruser.service';
+import { FarmeruserService } from '../../../services/farmeruser.service';
 
 interface ProductPayload {
   title: string;
