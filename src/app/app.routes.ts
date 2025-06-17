@@ -1,5 +1,4 @@
 import { Routes } from "@angular/router";
-import { AdminComponent } from "./Admin/admin/admin.component";
 import { ForgotPasswordComponent } from "./authentication/forgot-password/forgot-password.component";
 import { GoogleCallbackComponent } from "./authentication/google-callback/google-callback.component";
 import { LoginComponent } from "./authentication/login/login.component";
@@ -8,7 +7,7 @@ import { ResetPasswordComponent } from "./authentication/reset-password/reset-pa
 import { UpdatePasswordComponent } from "./authentication/update-password/update-password.component";
 import { AuthGuard } from "./core/auth/auth.guard";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { UsercategoryComponent } from "./Admin/admin/usercategory/usercategory.component";
+import { UsercategoryComponent } from "./dashboard/usercategory/usercategory.component";
 import { UserfarmerComponent } from "./dashboard/userfarmer/userfarmer.component";
 import { UserorderComponent } from "./dashboard/userorder/userorder.component";
 import { UservendorComponent } from "./dashboard/uservendor/uservendor.component";
@@ -24,7 +23,6 @@ import { PaymentComponent } from "./pages/payment/payment.component";
 import { ProduceComponent } from "./pages/produce/produce.component";
 import { ServicesComponent } from "./pages/services/services.component";
 import { VendorComponent } from "./pages/vendor/vendor.component";
-import { FarmuserComponent } from "./Admin/admin/farmuser/farmuser.component";
 
 export const routes: Routes = [
   // Public Pages
@@ -68,6 +66,13 @@ export const routes: Routes = [
         data: { roles: ['user', 'admin'] }
       },
       {
+        path: 'usercategory',
+        component: UsercategoryComponent,
+        title: 'Category',
+        canActivate: [AuthGuard],
+        data: { roles: ['admin'] }
+      },
+      {
         path: 'userorder',
         component: UserorderComponent,
         title: 'User Orders',
@@ -90,31 +95,6 @@ export const routes: Routes = [
       }
     ]
   },
-
-  // Admin Panel Routes
-  {
-    path: 'admin',
-    component: AdminComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['admin'] },
-    children: [
-      {
-        path: 'usercategory',
-        component: UsercategoryComponent,
-        title: 'Category',
-        canActivate: [AuthGuard],
-        data: { roles: ['admin'] }
-      },
-      {
-        path: 'farmuser',
-        component: FarmuserComponent,
-        title: 'Farm User',
-        canActivate: [AuthGuard],
-        data: { roles: ['admin'] }
-      }
-    ]
-  },
-
   // Error fallback
   { path: '**', title: '400', component: ErrorComponent }
 ];
