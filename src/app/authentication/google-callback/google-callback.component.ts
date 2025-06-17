@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-google-callback',
@@ -12,41 +13,47 @@ export class GoogleCallbackComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private authService: AuthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
-      const token = params['token'];
-      const returnUrl = params['returnUrl']?.trim() || '/dashboard';
+    this.route.queryParams.subscribe({
+      next: (params) => {
+        const token = params['token']; // ✅ matches your current URL
+        const username = params['username'];
+        const email = params['email'];
+        const role = params['role'];
 
-      if (token) {
-        console.log('✅ Google token received:', token);
+        if (token && username && email && role) {
+          if (isPlatformBrowser(this.platformId)) {
+            try {
+              this.authService.setToken(token);
+              this.authService.setUser({ username, email, role });
+              this.authService.markAuthenticated(); // 👈 Explicitly set auth state
 
-        if (isPlatformBrowser(this.platformId)) {
-          try {
-            localStorage.setItem('access_token', token);
-            alert('✅ Login successful! Redirecting...');
-          } catch (e) {
-            console.error('❌ Error saving token to localStorage:', e);
-            alert('⚠️ Unable to store login session.');
+              console.log('✅ Google login successful. Redirecting...');
+            } catch (e) {
+              console.error('❌ Error storing token/user info:', e);
+              alert('⚠️ Failed to store session.');
+              this.router.navigate(['/login']);
+              return;
+            }
           }
-        } else {
-          console.warn('⚠️ localStorage not available, skipping token storage.');
-        }
 
-        setTimeout(() => {
-          console.log(`🔁 Redirecting to ${returnUrl}...`);
-          this.router.navigateByUrl(returnUrl);
-        }, 100);
-      } else {
-        alert('❌ No token found. Login failed.');
+          setTimeout(() => {
+            this.router.navigate(['/dashboard']);
+          }, 300);
+        } else {
+          alert('❌ Missing token or user data. Login failed.');
+          this.router.navigate(['/login']);
+        }
+      },
+      error: (error) => {
+        console.error('❌ Error reading query params:', error);
+        alert('❌ Unexpected error occurred during login.');
         this.router.navigate(['/login']);
       }
-    }, error => {
-      console.error('❌ Error reading query params:', error);
-      alert('❌ Unexpected error occurred during login.');
-      this.router.navigate(['/login']);
     });
   }
 }

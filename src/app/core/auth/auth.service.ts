@@ -14,23 +14,30 @@ interface LoginResponse {
   providedIn: 'root',
 })
 export class AuthService {
+  markAuthenticated /**
+ * REGISTER a new user
+ */() {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'http://localhost:3000/auth'; // Adjust to your backend URL
   private currentUserRole = new BehaviorSubject<string | null>(null);
-
-  // Initialize authState with false, update it after platform check in constructor
   private authState = new BehaviorSubject<boolean>(false);
   public authState$ = this.authState.asObservable();
 
-  googleAuthUrl = `${this.apiUrl}/google`; // Set this if needed
+  googleAuthUrl = `${this.apiUrl}/google`;
 
   constructor(
     private http: HttpClient,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Only check token if running in browser environment
     if (isPlatformBrowser(this.platformId)) {
       this.authState.next(this.hasValidToken());
+
+      const user = localStorage.getItem('user');
+      const parsedUser = user ? JSON.parse(user) : null;
+      const role = parsedUser?.role || this.getUserRole();
+      this.currentUserRole.next(role);
     }
   }
 
@@ -48,6 +55,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap((res) => {
         this.setToken(res.access_token);
+        this.setUser(res.user);
       })
     );
   }
@@ -86,9 +94,10 @@ export class AuthService {
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
     }
     this.currentUserRole.next(null);
-    this.authState.next(false); // update auth state to logged out
+    this.authState.next(false);
     this.router.navigate(['/']);
   }
 
@@ -103,31 +112,71 @@ export class AuthService {
    * GET stored token
    */
   getToken(): string | null {
-    if (!isPlatformBrowser(this.platformId)) {
-      return null;
-    }
+    if (!isPlatformBrowser(this.platformId)) return null;
     return localStorage.getItem('access_token');
   }
 
   /**
-   * SET token (called on login or google OAuth callback)
+   * SET token (called on login or Google OAuth callback)
    */
   setToken(token: string): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('access_token', token);
     }
+
     const decoded = this.decodeToken(token);
     this.currentUserRole.next(decoded?.role ?? null);
-    this.authState.next(true); // update auth state to logged in
+    this.authState.next(true);
+
+    // Set minimal user info from token if necessary
+    if (decoded && decoded.email) {
+      const userInfo = {
+        username: decoded.username || '',
+        email: decoded.email,
+        role: decoded.role || 'user',
+      };
+      this.setUser(userInfo);
+    }
   }
 
   /**
-   * GET role from decoded token
+   * SET user info (can be from decoded token or direct response)
+   */
+  setUser(user: any): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('user', JSON.stringify(user));
+    }
+    this.currentUserRole.next(user?.role ?? null);
+    this.authState.next(true);
+  }
+
+  /**
+   * GET full user object
+   */
+  getUser(): any {
+    if (!isPlatformBrowser(this.platformId)) return null;
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  }
+
+  /**
+   * GET role from user object or token
    */
   getUserRole(): string | null {
+    const user = this.getUser();
+    if (user && user.role) return user.role;
+
     const token = this.getToken();
     if (!token) return null;
     return this.decodeToken(token)?.role ?? null;
+  }
+
+  /**
+   * GET username
+   */
+  getUsername(): string | null {
+    const user = this.getUser();
+    return user?.username ?? null;
   }
 
   /**
@@ -150,7 +199,7 @@ export class AuthService {
   }
 
   /**
-   * Helper to check if token exists and valid
+   * CHECK if token is valid and not expired
    */
   private hasValidToken(): boolean {
     const token = this.getToken();
@@ -158,7 +207,6 @@ export class AuthService {
     const decoded = this.decodeToken(token);
     if (!decoded || !decoded.exp) return false;
 
-    // Check expiration (exp in seconds)
     const now = Math.floor(Date.now() / 1000);
     return decoded.exp > now;
   }
