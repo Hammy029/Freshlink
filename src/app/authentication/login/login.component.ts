@@ -20,7 +20,7 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private ngZone: NgZone // ✅ For safe navigation
+    private ngZone: NgZone
   ) {}
 
   onSubmit(form: NgForm) {
@@ -28,16 +28,20 @@ export class LoginComponent {
       this.errorMessage = 'Please fill all fields correctly.';
       return;
     }
+
     this.errorMessage = null;
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (res) => {
-        // ✅ Save access_token and userId to localStorage
+        // ✅ Save required data to localStorage
         localStorage.setItem('access_token', res.access_token);
         localStorage.setItem('userId', res.user._id);
 
+        // ✅ Store role with fallback
+        const role = res.user.role === 'admin' || res.user.role === 'user' ? res.user.role : 'user';
+        localStorage.setItem('role', role);
 
-        // ✅ Navigate inside NgZone to fix UI not updating
+        // ✅ Navigate within Angular zone
         this.ngZone.run(() => {
           this.router.navigate(['/dashboard']);
         });
