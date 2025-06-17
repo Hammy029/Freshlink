@@ -32,7 +32,7 @@ export class UserfarmerComponent implements OnInit {
   products: any[] = [];
   categories: Category[] = [];
   editingProduct: any = null;
-  isAdmin: boolean = false; // <-- Track admin role
+  isAdmin: boolean = false;
 
   constructor(
     private categoryService: UsercategoryService,
@@ -40,9 +40,8 @@ export class UserfarmerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Determine user role (assuming you store it in localStorage)
-    const role = localStorage.getItem('role'); 
-    this.isAdmin = role === 'Admin'; // Adjust if you use different casing/role string
+    // Ask the service whether the user is admin
+    this.isAdmin = this.farmService.isAdmin();
 
     this.loadCategoriesAndThenProducts();
   }
@@ -58,15 +57,10 @@ export class UserfarmerComponent implements OnInit {
   }
 
   private fetchProducts(): void {
-    // Use role-based product fetching
-    const productsObservable = this.isAdmin
-      ? this.farmService.getAllProductsAdmin() // Admin: get all products
-      : this.farmService.getMyProducts();       // User: get own products
-
-    productsObservable.subscribe({
+    // Unified method that handles role internally
+    this.farmService.getProducts().subscribe({
       next: (data: any[]) => {
         console.log('Fetched products:', data);
-
         this.products = data.map(prod => ({
           ...prod,
           status: prod.status || 'Available'

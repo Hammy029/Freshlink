@@ -21,7 +21,7 @@ export class FarmerComponent implements OnInit {
   }
 
   loadProducts() {
-    this.farmService.getAllProducts().subscribe({
+    this.farmService.getProducts().subscribe({
       next: (data) => {
         this.products = data;
       },
@@ -33,7 +33,6 @@ export class FarmerComponent implements OnInit {
   }
 
   redirectToOrderForm(productId: string) {
-    // Navigate to user order form with productId param
     this.router.navigate(['dashboard/userorder', productId]);
   }
 }

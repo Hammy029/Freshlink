@@ -1,18 +1,21 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 
-// Define a FarmProduct interface to strongly type the products
 export interface FarmProduct {
   _id: string;
   name: string;
   description?: string;
   price: number;
-  status: string; // e.g. 'Available' or 'Sold'
+  status: string;
   category?: any;
-  farm?: any; // owner user
-  // add other relevant fields here...
+  farm?: any;
+}
+
+export interface User {
+  _id: string;
+  role: 'admin' | 'user';
 }
 
 @Injectable({
@@ -21,15 +24,19 @@ export interface FarmProduct {
 export class FarmService {
   private baseUrl = 'http://localhost:3000/farm';
   private isBrowser: boolean;
+  private currentUser: User | null = null;
 
   constructor(
     private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
+    if (this.isBrowser) {
+      const user = localStorage.getItem('user');
+      this.currentUser = user ? JSON.parse(user) : null;
+    }
   }
 
-  // Helper method to include Authorization header
   private getAuthHeaders(): HttpHeaders {
     let token = '';
     if (this.isBrowser) {
@@ -41,19 +48,26 @@ export class FarmService {
     });
   }
 
-  // Public: get all available products without auth header (for public UI)
+  // ✅ Public products (no login required)
   getAvailableProductsPublic(): Observable<FarmProduct[]> {
-    // Assumes backend endpoint GET /farm/public or public access to GET /farm
     return this.http.get<FarmProduct[]>(`${this.baseUrl}/public`);
   }
 
-  // New method to fetch all farm products for farmer UI (requires auth)
-  getAllProducts(): Observable<FarmProduct[]> {
-    return this.http.get<FarmProduct[]>(this.baseUrl, {
+  // ✅ Unified fetch method that switches based on user role
+  getProducts(): Observable<FarmProduct[]> {
+    if (!this.currentUser) return of([]); // Not logged in
+
+    const url =
+      this.currentUser.role === 'admin'
+        ? `${this.baseUrl}/admin-products`
+        : `${this.baseUrl}/my-products`;
+
+    return this.http.get<FarmProduct[]>(url, {
       headers: this.getAuthHeaders()
     });
   }
 
+  // ✅ Optionally keep separate admin + user methods if needed
   getAllProductsAdmin(): Observable<FarmProduct[]> {
     return this.http.get<FarmProduct[]>(`${this.baseUrl}/admin-products`, {
       headers: this.getAuthHeaders()
@@ -66,25 +80,34 @@ export class FarmService {
     });
   }
 
+  // ✅ Add a new product (auto-linked by backend to current user)
   addProduct(product: any): Observable<FarmProduct> {
     return this.http.post<FarmProduct>(this.baseUrl, product, {
       headers: this.getAuthHeaders()
     });
   }
 
+  // ✅ Update existing product
   updateProduct(id: string, updatedData: any): Observable<FarmProduct> {
     return this.http.patch<FarmProduct>(`${this.baseUrl}/${id}`, updatedData, {
       headers: this.getAuthHeaders()
     });
   }
 
+  // ✅ Delete product
   deleteProduct(id: string): Observable<FarmProduct> {
     return this.http.delete<FarmProduct>(`${this.baseUrl}/${id}`, {
       headers: this.getAuthHeaders()
     });
   }
 
+  // ✅ Mark product as sold
   markAsSold(id: string): Observable<FarmProduct> {
     return this.updateProduct(id, { status: 'Sold' });
+  }
+
+  // ✅ Utility: check if current user is admin
+  isAdmin(): boolean {
+    return this.currentUser?.role === 'admin';
   }
 }
