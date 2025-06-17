@@ -23,6 +23,7 @@ import { PaymentComponent } from "./pages/payment/payment.component";
 import { ProduceComponent } from "./pages/produce/produce.component";
 import { ServicesComponent } from "./pages/services/services.component";
 import { VendorComponent } from "./pages/vendor/vendor.component";
+import { CartComponent } from "./pages/cart/cart.component";
 
 export const routes: Routes = [
   // Public Pages
@@ -36,6 +37,7 @@ export const routes: Routes = [
   { path: 'farmer', title: 'Farmer', component: FarmerComponent },
   { path: 'vendor', title: 'Vendor', component: VendorComponent },
   { path: 'produce', title: 'Produce', component: ProduceComponent },
+  {path:'cart', title:'Cart', component:CartComponent},
 
   // Order & Payment
   { path: 'payment', title: 'Payment', component: PaymentComponent },
