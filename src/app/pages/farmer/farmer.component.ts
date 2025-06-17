@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FarmService } from '../../services/farm.service';
 import { CommonModule } from '@angular/common';
+import { CartService } from '../cart/service/cart.service';
 
 @Component({
   selector: 'app-farmer',
@@ -13,10 +14,13 @@ import { CommonModule } from '@angular/common';
 export class FarmerComponent implements OnInit {
   products: any[] = [];
   errorMessage = '';
-  cart: any[] = [];
-Math: any;
+  Math: any;
 
-  constructor(private farmService: FarmService, private router: Router) {}
+  constructor(
+    private farmService: FarmService,
+    private router: Router,
+    private cartService: CartService
+  ) {}
 
   ngOnInit() {
     this.loadProducts();
@@ -27,7 +31,9 @@ Math: any;
       next: (data) => {
         this.products = data.map(product => ({
           ...product,
-          orderQuantity: 1 // Default quantity for cart
+          _originalQuantity: product.quantity,
+          quantity: product.quantity,
+          orderQuantity: 1
         }));
       },
       error: (err) => {
@@ -41,36 +47,46 @@ Math: any;
     this.router.navigate(['dashboard/userorder', productId]);
   }
 
-  addToCart(product: any) {
-    const quantity = product.orderQuantity || 1;
-
-    if (quantity < 1 || quantity > product.quantity) return;
-
-    const existing = this.cart.find(item => item._id === product._id);
-    if (existing) {
-      existing.orderQuantity += quantity;
-    } else {
-      this.cart.push({
-        ...product,
-        orderQuantity: quantity
-      });
-    }
-
-    // Reduce available quantity in UI and reset input
-    product.quantity -= quantity;
-    product.orderQuantity = 1;
-  }
-
   increaseQuantity(product: any) {
-    if (product.orderQuantity < product.quantity) {
+    if (product.orderQuantity < product._originalQuantity) {
       product.orderQuantity++;
+      this.updateAvailableQuantity(product);
     }
   }
 
   decreaseQuantity(product: any) {
     if (product.orderQuantity > 1) {
       product.orderQuantity--;
+      this.updateAvailableQuantity(product);
     }
+  }
+
+  updateAvailableQuantity(product: any) {
+    product.quantity = product._originalQuantity - product.orderQuantity;
+  }
+
+  addToCart(product: any) {
+    const quantity = product.orderQuantity || 1;
+
+    if (quantity < 1 || quantity > product._originalQuantity) return;
+
+    const cartItem = {
+      productId: product._id, // ✅ Match the service expected field
+      title: product.title,
+      price: product.price,
+      quantity: quantity,
+      total: product.price * quantity,
+      availableQuantity: product._originalQuantity
+    };
+
+    this.cartService.addToCart(cartItem);
+
+    // Update product view after adding to cart
+    product._originalQuantity -= quantity;
+    product.quantity = product._originalQuantity;
+    product.orderQuantity = 1;
+
+    alert(`${product.title} added to cart successfully!`);
   }
 
   getTotalPrice(product: any): number {

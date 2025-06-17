@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 
 export interface FarmProduct {
+  quantity: any;
   _id: string;
   name: string;
   description?: string;
