@@ -26,7 +26,7 @@ export class CartService {
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
     if (this.isBrowser) {
-      this.loadCartFromStorage(); // ✅ Safe for browser only
+      this.loadCartFromStorage();
     }
   }
 
@@ -35,21 +35,28 @@ export class CartService {
   }
 
   addToCart(product: any): void {
-    const existing = this.cart.find(item => item.productId === product._id);
+    const productId = product.productId || product._id; // allow compatibility from UI
+    const quantity = product.orderQuantity || product.quantity || 1;
+
+    const existing = this.cart.find(item => item.productId === productId);
+
     if (existing) {
-      existing.quantity += product.orderQuantity;
+      existing.quantity += quantity;
       existing.total = existing.price * existing.quantity;
     } else {
-      this.cart.push({
-        productId: product._id,
+      const newItem: CartItem = {
+        productId: productId,
         title: product.title,
         price: product.price,
-        quantity: product.orderQuantity,
-        total: product.price * product.orderQuantity,
-        availableQuantity: product.quantity || 0
-      });
+        quantity: quantity,
+        total: product.price * quantity,
+        availableQuantity: product.availableQuantity || product.quantity || 0
+      };
+      this.cart.push(newItem);
     }
+
     this.saveCartToStorage();
+    console.log('Cart:', this.cart);
   }
 
   removeFromCart(productId: string): void {
@@ -100,9 +107,11 @@ export class CartService {
   }
 
   private loadCartFromStorage(): void {
-    const saved = localStorage.getItem('cart');
-    if (saved) {
-      this.cart = JSON.parse(saved);
+    if (this.isBrowser) {
+      const saved = localStorage.getItem('cart');
+      if (saved) {
+        this.cart = JSON.parse(saved);
+      }
     }
   }
 }
