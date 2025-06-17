@@ -26,8 +26,9 @@ export class FarmerComponent implements OnInit {
     this.loadProducts();
   }
 
+  // ✅ Public fetch method used for general UI access (logged in or not)
   loadProducts() {
-    this.farmService.getProducts().subscribe({
+    this.farmService.getAvailableProductsPublic().subscribe({
       next: (data) => {
         this.products = data.map(product => ({
           ...product,
@@ -71,7 +72,7 @@ export class FarmerComponent implements OnInit {
     if (quantity < 1 || quantity > product._originalQuantity) return;
 
     const cartItem = {
-      productId: product._id, // ✅ Match the service expected field
+      productId: product._id,
       title: product.title,
       price: product.price,
       quantity: quantity,
