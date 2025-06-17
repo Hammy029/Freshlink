@@ -1,36 +1,34 @@
-<div class="flex flex-col min-h-screen bg-gray-100">
-  <!-- Main Content Area -->
-  <main class="flex-1 overflow-y-auto p-6 md:p-18">
-    
-    <!-- Sticky Dashboard Navigation -->
-    <div class="sticky top-20 md:top-0 z-40 bg-white shadow mb-4 rounded-lg">
-      <nav class="flex flex-col sm:flex-row justify-center sm:space-x-4 bg-gray-50 border border-gray-200 rounded-lg overflow-x-auto text-center">
-        <a
-          routerLink="/dashboard/userfarmer"
-          routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
-          class="px-4 py-2 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
-        >
-          User Farmer
-        </a>
-        <a
-          routerLink="/dashboard/userorder"
-          routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
-          class="px-4 py-2 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
-        >
-          Orders
-        </a>
-        <a
-          *ngIf="role === 'admin'"
-          routerLink="/dashboard/usercategory"
-          routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
-          class="px-4 py-2 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
-        >
-          Categories
-        </a>
-      </nav>
-    </div>
+<div class="flex flex-col min-h-screen bg-gray-100 pt-20 px-4 md:px-14">
+  <!-- Sticky Dashboard Navigation -->
+  <header class="bg-white shadow sticky top-16 z-40">
+    <nav class="flex flex-col sm:flex-row justify-center sm:space-x-4 bg-gray-50 border-b border-gray-200">
+      <a
+        routerLink="/dashboard/userfarmer"
+        routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
+        class="px-4 py-3 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
+      >
+        User Farmer
+      </a>
+      <a
+        routerLink="/dashboard/userorder"
+        routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
+        class="px-4 py-3 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
+      >
+        Orders
+      </a>
+      <a
+        *ngIf="role === 'admin'"
+        routerLink="/dashboard/usercategory"
+        routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
+        class="px-4 py-3 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
+      >
+        Categories
+      </a>
+    </nav>
+  </header>
 
-    <!-- Welcome Section -->
+  <!-- Welcome Section -->
+  <main class="flex-1 overflow-y-auto p-6">
     <div *ngIf="isBaseDashboardRoute" class="text-center mt-20 space-y-4">
       <h1 class="text-3xl sm:text-4xl font-bold text-blue-700">Welcome to Your Control Panel</h1>
       <p class="text-gray-600 text-base sm:text-lg">Manage your farm, vendors, orders, and services all in one place.</p>

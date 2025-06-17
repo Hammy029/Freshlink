@@ -17,7 +17,6 @@ export class DashboardComponent {
   constructor(private router: Router) {
     // Retrieve and validate the role from localStorage
     const storedRole = localStorage.getItem('role');
-
     if (storedRole === 'admin' || storedRole === 'user') {
       this.role = storedRole;
     }
@@ -26,7 +25,7 @@ export class DashboardComponent {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe(() => {
-      this.isBaseDashboardRoute = this.router.url === '/dashboard';
+      this.isBaseDashboardRoute = this.router.url === '/dashboard' || this.router.url === '/dashboard/';
     });
   }
 }

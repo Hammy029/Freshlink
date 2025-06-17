@@ -8,7 +8,7 @@ import { ResetPasswordComponent } from "./authentication/reset-password/reset-pa
 import { UpdatePasswordComponent } from "./authentication/update-password/update-password.component";
 import { AuthGuard } from "./core/auth/auth.guard";
 import { DashboardComponent } from "./dashboard/dashboard.component";
-import { UsercategoryComponent } from "./dashboard/usercategory/usercategory.component";
+import { UsercategoryComponent } from "./Admin/admin/usercategory/usercategory.component";
 import { UserfarmerComponent } from "./dashboard/userfarmer/userfarmer.component";
 import { UserorderComponent } from "./dashboard/userorder/userorder.component";
 import { UservendorComponent } from "./dashboard/uservendor/uservendor.component";
