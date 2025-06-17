@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Category, UsercategoryService } from '../../../services/usercategory.service';
+import { Category, UsercategoryService } from '../../services/usercategory.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
