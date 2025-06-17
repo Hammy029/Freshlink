@@ -1,44 +1,51 @@
-<div class="flex min-h-screen bg-gray-100">
-  <!-- Sidebar -->
-  <aside class="w-64 bg-white shadow-md p-4 space-y-6 hidden md:block">
-    <div class="text-2xl font-bold text-blue-600">Dashboard</div>
-    <nav class="flex flex-col space-y-4 text-gray-700">
-      <!-- These links are for all users -->
-      <a routerLink="/dashboard/userfarmer" routerLinkActive="text-blue-600" class="hover:text-blue-600">User Farmer</a>
-      <a routerLink="/dashboard/userorder" class="hover:text-blue-600">Orders</a>
+<div class="flex flex-col min-h-screen bg-gray-100">
+  <!-- Main Content Area -->
+  <main class="flex-1 overflow-y-auto p-6 md:p-18">
+    
+    <!-- Sticky Dashboard Navigation -->
+    <div class="sticky top-20 md:top-0 z-40 bg-white shadow mb-4 rounded-lg">
+      <nav class="flex flex-col sm:flex-row justify-center sm:space-x-4 bg-gray-50 border border-gray-200 rounded-lg overflow-x-auto text-center">
+        <a
+          routerLink="/dashboard/userfarmer"
+          routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
+          class="px-4 py-2 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
+        >
+          User Farmer
+        </a>
+        <a
+          routerLink="/dashboard/userorder"
+          routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
+          class="px-4 py-2 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
+        >
+          Orders
+        </a>
+        <a
+          *ngIf="role === 'admin'"
+          routerLink="/dashboard/usercategory"
+          routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
+          class="px-4 py-2 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
+        >
+          Categories
+        </a>
+      </nav>
+    </div>
 
-      <!-- Show only if role is admin -->
-      <a *ngIf="role === 'admin'" routerLink="/dashboard/usercategory" class="hover:text-blue-600">Categories</a>
-    </nav>
-  </aside>
-
-  <!-- Main Content -->
-  <div class="flex-1 flex flex-col">
-    <!-- Topbar -->
-    <header class="bg-white shadow flex items-center justify-between px-6 py-4">
-      <div class="text-lg font-semibold">Welcome to Dashboard</div>
-      <div class="flex items-center space-x-4">
-        <span class="text-gray-600">Hello, {{ role === 'admin' ? 'Admin' : 'User' }}</span>
-        <button class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">Logout</button>
+    <!-- Welcome Section -->
+    <div *ngIf="isBaseDashboardRoute" class="text-center mt-20 space-y-4">
+      <h1 class="text-3xl sm:text-4xl font-bold text-blue-700">Welcome to Your Control Panel</h1>
+      <p class="text-gray-600 text-base sm:text-lg">Manage your farm, vendors, orders, and services all in one place.</p>
+      <p class="text-gray-500">Use the navigation above to switch between sections.</p>
+      <div class="mt-6">
+        <a
+          routerLink="/dashboard/userorder"
+          class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition"
+        >
+          Get Started
+        </a>
       </div>
-    </header>
+    </div>
 
-    <!-- Main Content Area -->
-    <main class="p-6">
-      <!-- Welcome Message (shown by default or on /dashboard) -->
-      <div *ngIf="isBaseDashboardRoute" class="text-center mt-20 space-y-4">
-        <h1 class="text-4xl font-bold text-blue-700">Welcome to Your Control Panel</h1>
-        <p class="text-gray-600 text-lg">Manage your farm, vendors, orders, and services all in one place.</p>
-        <p class="text-gray-500">Use the sidebar to navigate between different sections.</p>
-        <div class="mt-6">
-          <a routerLink="/dashboard/userorder" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
-            Get Started
-          </a>
-        </div>
-      </div>
-
-      <!-- Router View -->
-      <router-outlet></router-outlet>
-    </main>
-  </div>
+    <!-- Page Content -->
+    <router-outlet></router-outlet>
+  </main>
 </div>

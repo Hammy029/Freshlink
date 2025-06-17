@@ -29,6 +29,9 @@ export class HeaderComponent {
   }
 
   isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();  // Assuming your AuthService has this method
+    return this.authService.isLoggedIn();
   }
-}
+
+  get userRole(): string {
+    return this.authService.getUserRole() || '';
+  }}

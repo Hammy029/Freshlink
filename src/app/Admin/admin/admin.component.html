@@ -1,0 +1,42 @@
+<div class="flex flex-col min-h-screen bg-gray-100">
+  <!-- Sticky Admin Topbar -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <nav class="flex justify-center bg-gray-50 border-b border-gray-200">
+      <a
+        routerLink="/admin/usercategory"
+        routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+        class="px-4 py-3 text-gray-700 hover:text-blue-600 transition"
+      >
+        Categories
+      </a>
+      <a
+        routerLink="/admin/uservendor"
+        routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+        class="px-4 py-3 text-gray-700 hover:text-blue-600 transition"
+      >
+        Vendors
+      </a>
+      <!-- You can add more admin nav links here -->
+    </nav>
+  </header>
+
+  <!-- Admin Main Content -->
+  <main class="flex-1 overflow-y-auto p-6 md:p-18">
+    <!-- Optional Welcome Message -->
+    <div *ngIf="isAdminDashboardBase" class="text-center mt-20 space-y-4">
+      <h1 class="text-4xl font-bold text-blue-700">Welcome Admin</h1>
+      <p class="text-gray-600 text-lg">Manage categories, vendors, and system settings.</p>
+      <div class="mt-6">
+        <a
+          routerLink="/admin/usercategory"
+          class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition"
+        >
+          Go to Categories
+        </a>
+      </div>
+    </div>
+
+    <!-- Render nested admin routes here -->
+    <router-outlet></router-outlet>
+  </main>
+</div>
