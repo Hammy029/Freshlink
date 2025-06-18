@@ -17,7 +17,7 @@ export interface CartItem {
 })
 export class CartService {
   private cart: CartItem[] = [];
-  private apiUrl = 'http://localhost:3000/order'; // ✅ Backend order endpoint
+  private apiUrl = 'http://localhost:3000/order';
   private isBrowser: boolean;
 
   constructor(
@@ -119,13 +119,18 @@ export class CartService {
         throw new Error('Invalid user data.');
       }
 
+      // ✅ Updated payload to match backend expectations (productId + grandTotal)
       const payload = {
         userId,
         items: this.cart.map(item => ({
-          product: item.productId,
+          productId: item.productId,
+          title: item.title,
+          price: item.price,
           quantity: item.quantity,
+          total: item.total,
+          availableQuantity: item.availableQuantity,
         })),
-        totalAmount: this.getTotal(),
+        grandTotal: this.getTotal(),
       };
 
       const headers = new HttpHeaders({

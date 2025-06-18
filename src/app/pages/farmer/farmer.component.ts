@@ -16,6 +16,10 @@ export class FarmerComponent implements OnInit {
   errorMessage = '';
   Math: any;
 
+  // ✅ Pagination properties
+  itemsPerPage: number = 12;
+  currentPage: number = 1;
+
   constructor(
     private farmService: FarmService,
     private router: Router,
@@ -26,7 +30,6 @@ export class FarmerComponent implements OnInit {
     this.loadProducts();
   }
 
-  // ✅ Public fetch method used for general UI access (logged in or not)
   loadProducts() {
     this.farmService.getAvailableProductsPublic().subscribe({
       next: (data) => {
@@ -42,6 +45,28 @@ export class FarmerComponent implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  // ✅ Pagination logic
+  paginatedProducts(): any[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.products.slice(start, start + this.itemsPerPage);
+  }
+
+  totalPages(): number {
+    return Math.ceil(this.products.length / this.itemsPerPage);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages()) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   redirectToOrderForm(productId: string) {
