@@ -24,6 +24,7 @@ import { ProduceComponent } from "./pages/produce/produce.component";
 import { ServicesComponent } from "./pages/services/services.component";
 import { VendorComponent } from "./pages/vendor/vendor.component";
 import { CartComponent } from "./pages/cart/cart.component";
+import { SearchComponent } from "./dashboard/search/search.component";
 
 export const routes: Routes = [
   // Public Pages
@@ -64,6 +65,13 @@ export const routes: Routes = [
         path: 'userfarmer',
         component: UserfarmerComponent,
         title: 'User Farmer',
+        canActivate: [AuthGuard],
+        data: { roles: ['user', 'admin'] }
+      },
+      {
+        path: 'search',
+        component: SearchComponent,
+        title: 'Search',
         canActivate: [AuthGuard],
         data: { roles: ['user', 'admin'] }
       },

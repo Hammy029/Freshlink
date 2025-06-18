@@ -1,19 +1,32 @@
 <h2 class="text-2xl font-bold mb-6 text-gray-800">All Orders (Admin View)</h2>
 
+<!-- ✅ Toast Notification -->
+<div
+  *ngIf="copyToastVisible"
+  class="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow-md z-50 animate-fade-in-out"
+>
+  ✅ Product ID copied!
+</div>
+
 <!-- 🌀 Loading spinner -->
 <div *ngIf="loading" class="text-center text-indigo-600 font-medium my-4">
   Loading orders...
 </div>
 
 <div *ngIf="!loading && orders.length > 0; else noOrders" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  <div *ngFor="let order of orders" class="bg-white border rounded-xl shadow-sm p-5 hover:shadow-md transition-all flex flex-col justify-between">
-
+  <div
+    *ngFor="let order of orders"
+    class="bg-white border rounded-xl shadow-sm p-5 hover:shadow-md transition-all flex flex-col justify-between"
+  >
     <div class="flex-1 space-y-4">
       <!-- 🛒 Product Details -->
       <div>
         <h3 class="text-lg font-semibold text-indigo-700 mb-3">Ordered Products</h3>
         <ul class="space-y-3">
-          <li *ngFor="let item of order.items" class="bg-gray-50 p-3 rounded-md border text-sm text-gray-700">
+          <li
+            *ngFor="let item of order.items"
+            class="bg-gray-50 p-3 rounded-md border text-sm text-gray-700"
+          >
             <p><span class="font-medium">Product:</span> {{ item.product?.name || 'N/A' }}</p>
 
             <!-- ✅ Copyable Product ID -->

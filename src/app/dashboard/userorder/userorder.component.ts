@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 export class UserorderComponent implements OnInit {
   orders: Order[] = [];
   loading = false;
+  copyToastVisible = false; // ✅ Toast state
 
   constructor(
     private ordersService: OrdersService,
@@ -60,14 +61,24 @@ export class UserorderComponent implements OnInit {
   }
 
   /**
-   * ✅ Copy product ID to clipboard
+   * ✅ Copy product ID to clipboard with toast
    */
   copyToClipboard(text: string | undefined): void {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
-      alert('Product ID copied to clipboard!');
+      this.showCopyToast();
     }).catch(err => {
       console.error('Clipboard copy failed', err);
     });
+  }
+
+  /**
+   * ✅ Show copy toast temporarily
+   */
+  showCopyToast(): void {
+    this.copyToastVisible = true;
+    setTimeout(() => {
+      this.copyToastVisible = false;
+    }, 2000); // 2 seconds
   }
 }

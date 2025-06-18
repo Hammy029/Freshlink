@@ -23,6 +23,13 @@
       >
         Orders
       </a>
+      <a
+        routerLink="/dashboard/search"
+        routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
+        class="px-4 py-3 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
+      >
+        Search
+      </a>
         <a
         *ngIf="role === 'admin'"
         routerLink="/dashboard/usercategory"
