@@ -1,7 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { isPlatformBrowser } from '@angular/common';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 
 export interface CartItem {
   productId: string;
@@ -17,7 +17,7 @@ export interface CartItem {
 })
 export class CartService {
   private cart: CartItem[] = [];
-  private apiUrl = 'http://localhost:3000/cart'; // Replace with your actual backend order endpoint
+  private apiUrl = 'http://localhost:3000/order'; // ✅ Backend order endpoint
   private isBrowser: boolean;
 
   constructor(
@@ -45,18 +45,18 @@ export class CartService {
       existing.total = existing.price * existing.quantity;
     } else {
       const newItem: CartItem = {
-        productId: productId,
+        productId,
         title: product.title,
         price: product.price,
-        quantity: quantity,
+        quantity,
         total: product.price * quantity,
-        availableQuantity: product.availableQuantity || product.quantity || 0
+        availableQuantity: product.availableQuantity || product.quantity || 0,
       };
       this.cart.push(newItem);
     }
 
     this.saveCartToStorage();
-    console.log('Cart:', this.cart);
+    console.log('🛒 Cart updated:', this.cart);
   }
 
   removeFromCart(productId: string): void {
@@ -93,32 +93,75 @@ export class CartService {
 
   /**
    * Sends the cart to the backend as a properly formatted order payload.
-   * Only includes necessary fields.
+   * Includes Authorization header with token from localStorage.
    */
-  sendCartToBackend(userId: string): Observable<any> {
-    const payload = {
-      userId,
-      items: this.cart.map(item => ({
-        product: item.productId,
-        quantity: item.quantity
-      })),
-      totalAmount: this.getTotal(),
-    };
+  sendCartToBackend(): Observable<any> {
+    try {
+      const userStr = localStorage.getItem('user');
+      const token = localStorage.getItem('access_token');
 
-    return this.http.post(this.apiUrl, payload);
+      if (!userStr || !token) {
+        console.error('❌ Missing user or token in localStorage.');
+        throw new Error('User not logged in or token missing.');
+      }
+
+      let parsedUser: any;
+      try {
+        parsedUser = JSON.parse(userStr);
+      } catch (jsonError) {
+        console.error('❌ Failed to parse user JSON from localStorage.', jsonError);
+        throw new Error('Corrupted user data.');
+      }
+
+      const userId = parsedUser._id || parsedUser.id;
+      if (!userId) {
+        console.error('❌ User ID missing in parsed user object:', parsedUser);
+        throw new Error('Invalid user data.');
+      }
+
+      const payload = {
+        userId,
+        items: this.cart.map(item => ({
+          product: item.productId,
+          quantity: item.quantity,
+        })),
+        totalAmount: this.getTotal(),
+      };
+
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      });
+
+      console.log('📦 Sending order payload:', payload);
+
+      return this.http.post(this.apiUrl, payload, { headers });
+    } catch (error) {
+      console.error('❌ sendCartToBackend() error:', error);
+      return throwError(() => error);
+    }
   }
 
   private saveCartToStorage(): void {
     if (this.isBrowser) {
-      localStorage.setItem('cart', JSON.stringify(this.cart));
+      try {
+        localStorage.setItem('cart', JSON.stringify(this.cart));
+      } catch (e) {
+        console.error('❌ Failed to save cart to localStorage:', e);
+      }
     }
   }
 
   private loadCartFromStorage(): void {
     if (this.isBrowser) {
-      const saved = localStorage.getItem('cart');
-      if (saved) {
-        this.cart = JSON.parse(saved);
+      try {
+        const saved = localStorage.getItem('cart');
+        if (saved) {
+          this.cart = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.error('❌ Failed to load cart from localStorage:', e);
+        this.cart = [];
       }
     }
   }

@@ -15,10 +15,11 @@ interface LoginResponse {
 })
 export class AuthService {
   markAuthenticated /**
- * REGISTER a new user
- */() {
+   * REGISTER a new user
+   */ () {
     throw new Error('Method not implemented.');
   }
+
   private apiUrl = 'http://localhost:3000/auth'; // Adjust to your backend URL
   private currentUserRole = new BehaviorSubject<string | null>(null);
   private authState = new BehaviorSubject<boolean>(false);
@@ -128,13 +129,18 @@ export class AuthService {
     this.currentUserRole.next(decoded?.role ?? null);
     this.authState.next(true);
 
-    // Set minimal user info from token if necessary
+    // Set minimal user info from token or combine with existing
     if (decoded && decoded.email) {
+      const existingUser = this.getUser();
+
       const userInfo = {
-        username: decoded.username || '',
+        _id: decoded.sub || existingUser?._id || null, // Ensure _id is preserved
+        username: decoded.username || existingUser?.username || '',
         email: decoded.email,
         role: decoded.role || 'user',
+        phone_no: existingUser?.phone_no || null, // optional extra
       };
+
       this.setUser(userInfo);
     }
   }

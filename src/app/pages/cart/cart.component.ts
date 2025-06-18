@@ -58,21 +58,33 @@ export class CartComponent implements OnInit {
   }
 
   submitCart(): void {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const userId = user?._id;
+    if (!this.isBrowser) return;
 
-    if (!userId) {
+    const token = localStorage.getItem('access_token');
+    const user = localStorage.getItem('user');
+
+    if (!token || !user) {
       alert('Please log in to place an order.');
       return;
     }
 
-    this.cartService.sendCartToBackend(userId).subscribe({
-      next: () => {
-        alert('Order placed successfully!');
-        this.cartService.clearCart();
-        this.loadCart();
-      },
-      error: () => alert('Failed to place order'),
-    });
+    try {
+      console.log('Sending cart to backend...');
+      this.cartService.sendCartToBackend().subscribe({
+        next: (response) => {
+          console.log('✅ Order placed:', response);
+          alert('Order placed successfully!');
+          this.cartService.clearCart();
+          this.loadCart();
+        },
+        error: (error) => {
+          console.error('❌ Order failed:', error);
+          alert('Failed to place order. Check console for details.');
+        },
+      });
+    } catch (error) {
+      console.error('❌ Unexpected client error:', error);
+      alert('Unexpected error. Possibly corrupted user data.');
+    }
   }
 }
