@@ -58,4 +58,16 @@ export class UserorderComponent implements OnInit {
       });
     }
   }
+
+  /**
+   * ✅ Copy product ID to clipboard
+   */
+  copyToClipboard(text: string | undefined): void {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Product ID copied to clipboard!');
+    }).catch(err => {
+      console.error('Clipboard copy failed', err);
+    });
+  }
 }
