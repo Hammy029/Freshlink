@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OrdersService } from './service/orders.service';
+import { OrdersService, Order } from './service/orders.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,10 +8,11 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-userorder',
   templateUrl: './userorder.component.html',
   imports: [CommonModule, FormsModule],
-  styleUrls: ['./userorder.component.css']
+  styleUrls: ['./userorder.component.css'],
 })
 export class UserorderComponent implements OnInit {
-  orders: any[] = [];
+  orders: Order[] = [];
+  loading = false;
 
   constructor(
     private ordersService: OrdersService,
@@ -23,22 +24,25 @@ export class UserorderComponent implements OnInit {
   }
 
   /**
-   * ✅ Load all orders with populated user and product data
+   * ✅ Load all orders (admin view)
    */
   loadAllOrders(): void {
+    this.loading = true;
     this.ordersService.getAllOrders().subscribe({
-      next: (data: any[]) => {
+      next: (data: Order[]) => {
         this.orders = data;
+        this.loading = false;
         console.log('Admin orders:', this.orders);
       },
       error: (err) => {
         console.error('Failed to load orders', err);
-      }
+        this.loading = false;
+      },
     });
   }
 
   /**
-   * ✅ Optionally cancel order as admin
+   * ✅ Admin cancels an order
    */
   cancelOrder(orderId: string): void {
     if (confirm('Are you sure you want to cancel this order?')) {
@@ -47,10 +51,10 @@ export class UserorderComponent implements OnInit {
           alert('Order canceled successfully!');
           this.loadAllOrders();
         },
-        error: (err: any) => {
+        error: (err) => {
           console.error('Failed to cancel order', err);
           alert('Failed to cancel order.');
-        }
+        },
       });
     }
   }

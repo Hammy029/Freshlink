@@ -2,67 +2,92 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+// Define types to strengthen typing
+export interface OrderItem {
+  productId: string;
+  quantity: number;
+}
+
+export interface CreateOrderDto {
+  items: OrderItem[];
+  grandTotal: number;
+}
+
+export interface Order {
+  _id: string;
+  userId: any;
+  items: {
+    product: any;
+    quantity: number;
+  }[];
+  totalAmount: number;
+  createdAt: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class OrdersService {
-  private baseUrl = 'http://localhost:3000/order'; // ✅ Change if hosted elsewhere
+  private baseUrl = 'http://localhost:3000/order'; // ✅ Adjust for production
 
   constructor(private http: HttpClient) {}
 
   /**
-   * ✅ Create a new order from cart or product view
+   * ✅ Create a new order from cart
    */
-  placeOrder(orderData: { productId: any; quantity: any; notes: any }): Observable<any> {
-    return this.http.post(`${this.baseUrl}`, orderData);
+  placeOrder(orderData: CreateOrderDto): Observable<Order> {
+    return this.http.post<Order>(`${this.baseUrl}`, orderData);
   }
 
   /**
-   * ✅ Update an existing order
+   * ✅ Update an existing order (admin or owner)
    */
-  updateOrder(editingOrderId: string, orderData: { productId: any; quantity: any; notes: any }): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/${editingOrderId}`, orderData);
+  updateOrder(id: string, orderData: Partial<CreateOrderDto>): Observable<Order> {
+    return this.http.patch<Order>(`${this.baseUrl}/${id}`, orderData);
   }
 
   /**
-   * ✅ Cancel/Delete an order (if owner or admin)
+   * ✅ Cancel/Delete an order (admin or owner)
    */
-  cancelOrder(orderId: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${orderId}`);
+  cancelOrder(orderId: string): Observable<Order> {
+    return this.http.delete<Order>(`${this.baseUrl}/${orderId}`);
   }
 
   /**
-   * ✅ Get all orders — Admin use
+   * ✅ Admin: Get all orders
    */
-  getAllOrders(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}`);
+  getAllOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.baseUrl}`);
   }
 
   /**
-   * ✅ Get orders made by the currently logged-in user
+   * ✅ Logged-in user: Get their own orders
    */
-  getMyOrders(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/my-orders`);
+  getMyOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.baseUrl}/my-orders`);
   }
 
   /**
-   * ✅ Get orders for farm products owned by the logged-in farmer
+   * ✅ Farmer: Get orders for products they posted
    */
-  getOrdersForFarmer(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/farmer-orders`);
+  getOrdersForFarmer(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.baseUrl}/farmer-orders`);
   }
 
   /**
-   * ✅ Get details of a specific order by ID
+   * ✅ Get details of a specific order
    */
-  getOrderById(orderId: string): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/${orderId}`);
+  getOrderById(orderId: string): Observable<Order> {
+    return this.http.get<Order>(`${this.baseUrl}/${orderId}`);
   }
 
   /**
-   * ✅ Notify farmer about a new order (mock implementation supported)
+   * ✅ Notify farmer(s) after order placement
    */
-  notifyFarmer(orderId: string): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${orderId}/notify-farmer`, {});
+  notifyFarmer(orderId: string): Observable<{ message: string; orderId: string }> {
+    return this.http.post<{ message: string; orderId: string }>(
+      `${this.baseUrl}/${orderId}/notify-farmer`,
+      {}
+    );
   }
 }
