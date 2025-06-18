@@ -17,7 +17,7 @@ export interface CartItem {
 })
 export class CartService {
   private cart: CartItem[] = [];
-  private apiUrl = 'http://localhost:3000/cart';
+  private apiUrl = 'http://localhost:3000/cart'; // Replace with your actual backend order endpoint
   private isBrowser: boolean;
 
   constructor(
@@ -35,7 +35,7 @@ export class CartService {
   }
 
   addToCart(product: any): void {
-    const productId = product.productId || product._id; // allow compatibility from UI
+    const productId = product.productId || product._id;
     const quantity = product.orderQuantity || product.quantity || 1;
 
     const existing = this.cart.find(item => item.productId === productId);
@@ -91,12 +91,20 @@ export class CartService {
     return this.cart.reduce((sum, item) => sum + item.total, 0);
   }
 
+  /**
+   * Sends the cart to the backend as a properly formatted order payload.
+   * Only includes necessary fields.
+   */
   sendCartToBackend(userId: string): Observable<any> {
     const payload = {
       userId,
-      items: this.cart,
-      grandTotal: this.getTotal(),
+      items: this.cart.map(item => ({
+        product: item.productId,
+        quantity: item.quantity
+      })),
+      totalAmount: this.getTotal(),
     };
+
     return this.http.post(this.apiUrl, payload);
   }
 

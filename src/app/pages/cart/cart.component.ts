@@ -58,7 +58,13 @@ export class CartComponent implements OnInit {
   }
 
   submitCart(): void {
-    const userId = 'mock-user-id'; // Replace with actual user ID when logged in
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const userId = user?._id;
+
+    if (!userId) {
+      alert('Please log in to place an order.');
+      return;
+    }
 
     this.cartService.sendCartToBackend(userId).subscribe({
       next: () => {
