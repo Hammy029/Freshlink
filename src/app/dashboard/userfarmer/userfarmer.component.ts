@@ -32,7 +32,9 @@ export class UserfarmerComponent implements OnInit {
   products: any[] = [];
   categories: Category[] = [];
   editingProduct: any = null;
-  isAdmin: boolean = false; // <-- Track admin role
+  showAddForm: boolean = false;
+  isAdmin: boolean = false;
+  isSubmitting: boolean = false; // ✅ Prevents multiple submits
 
   constructor(
     private categoryService: UsercategoryService,
@@ -40,10 +42,7 @@ export class UserfarmerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Determine user role (assuming you store it in localStorage)
-    const role = localStorage.getItem('role'); 
-    this.isAdmin = role === 'Admin'; // Adjust if you use different casing/role string
-
+    this.isAdmin = this.farmService.isAdmin();
     this.loadCategoriesAndThenProducts();
   }
 
@@ -58,15 +57,8 @@ export class UserfarmerComponent implements OnInit {
   }
 
   private fetchProducts(): void {
-    // Use role-based product fetching
-    const productsObservable = this.isAdmin
-      ? this.farmService.getAllProductsAdmin() // Admin: get all products
-      : this.farmService.getMyProducts();       // User: get own products
-
-    productsObservable.subscribe({
+    this.farmService.getProducts().subscribe({
       next: (data: any[]) => {
-        console.log('Fetched products:', data);
-
         this.products = data.map(prod => ({
           ...prod,
           status: prod.status || 'Available'
@@ -76,10 +68,19 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
+  toggleAddForm(): void {
+    this.showAddForm = !this.showAddForm;
+    this.editingProduct = null; // close edit form if open
+  }
+
   postProduct(): void {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
     const farmerId = localStorage.getItem('userId');
     if (!farmerId) {
       console.error('Farmer ID not found in localStorage.');
+      this.isSubmitting = false;
       return;
     }
 
@@ -95,8 +96,17 @@ export class UserfarmerComponent implements OnInit {
       next: (res: any) => {
         this.products.unshift(res);
         this.resetForm();
+        this.showAddForm = false;
+        this.isSubmitting = false;
+
+        // ✅ Optional: reset native form element to clear residual validation
+        const formEl = document.querySelector('form');
+        if (formEl) (formEl as HTMLFormElement).reset();
       },
-      error: err => console.error('Error posting product:', err)
+      error: err => {
+        console.error('Error posting product:', err);
+        this.isSubmitting = false;
+      }
     });
   }
 
@@ -131,6 +141,7 @@ export class UserfarmerComponent implements OnInit {
 
   startEdit(prod: any): void {
     this.editingProduct = { ...prod };
+    this.showAddForm = false; // hide add form when editing
   }
 
   cancelEdit(): void {
@@ -138,7 +149,8 @@ export class UserfarmerComponent implements OnInit {
   }
 
   updateProduct(): void {
-    if (!this.editingProduct) return;
+    if (!this.editingProduct || this.isSubmitting) return;
+    this.isSubmitting = true;
 
     const updatedPayload: ProductPayload = {
       title: this.editingProduct.title,
@@ -154,11 +166,15 @@ export class UserfarmerComponent implements OnInit {
         const index = this.products.findIndex(p => p._id === updated._id);
         if (index > -1) {
           this.products[index] = updated;
-          this.products = [...this.products]; // Force UI refresh
+          this.products = [...this.products];
         }
         this.editingProduct = null;
+        this.isSubmitting = false;
       },
-      error: err => console.error('Error updating product:', err)
+      error: err => {
+        console.error('Error updating product:', err);
+        this.isSubmitting = false;
+      }
     });
   }
 

@@ -9,6 +9,7 @@ import { AuthGuard } from "./core/auth/auth.guard";
 import { DashboardComponent } from "./dashboard/dashboard.component";
 import { UsercategoryComponent } from "./dashboard/usercategory/usercategory.component";
 import { UserfarmerComponent } from "./dashboard/userfarmer/userfarmer.component";
+import { UserorderComponent } from "./dashboard/userorder/userorder.component";
 import { UservendorComponent } from "./dashboard/uservendor/uservendor.component";
 import { AboutComponent } from "./pages/about/about.component";
 import { BlogsComponent } from "./pages/blogs/blogs.component";
@@ -22,9 +23,7 @@ import { PaymentComponent } from "./pages/payment/payment.component";
 import { ProduceComponent } from "./pages/produce/produce.component";
 import { ServicesComponent } from "./pages/services/services.component";
 import { VendorComponent } from "./pages/vendor/vendor.component";
-import { FarmuserComponent } from "./users/farmuser/farmuser.component";
-import { UsersComponent } from "./users/users.component";
-import { UserorderComponent } from "./dashboard/userorder/userorder.component";
+import { CartComponent } from "./pages/cart/cart.component";
 
 export const routes: Routes = [
   // Public Pages
@@ -34,12 +33,13 @@ export const routes: Routes = [
   { path: 'services', title: 'Services', component: ServicesComponent },
   { path: 'blogs', title: 'Blogs', component: BlogsComponent },
 
-  // Farmer/Vendor Info (Assuming public access)
+  // Farmer/Vendor Info
   { path: 'farmer', title: 'Farmer', component: FarmerComponent },
   { path: 'vendor', title: 'Vendor', component: VendorComponent },
   { path: 'produce', title: 'Produce', component: ProduceComponent },
+  {path:'cart', title:'Cart', component:CartComponent},
 
-  // Order & Payment (Assuming public or authenticated user access)
+  // Order & Payment
   { path: 'payment', title: 'Payment', component: PaymentComponent },
   { path: 'orders', title: 'Orders', component: OrdersComponent },
   { path: 'chat', title: 'Chat', component: ChatComponent },
@@ -52,71 +52,51 @@ export const routes: Routes = [
   { path: 'update-password', title: 'Update password', component: UpdatePasswordComponent },
   { path: 'reset-password', title: 'Reset password', component: ResetPasswordComponent },
 
-  // Admin Dashboard (Only accessible by admins)
+  // Dashboard - General (User + Admin)
   {
     path: 'dashboard',
     title: 'Dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard],
-    data: { roles: ['user', 'admin'] },  // <-- Restrict dashboard to admins only
+    data: { roles: ['user', 'admin'] },
     children: [
       {
         path: 'userfarmer',
         component: UserfarmerComponent,
-        canActivate: [AuthGuard],
         title: 'User Farmer',
-        data: { roles: ['user', 'admin'] }
-      },
-      {
-        path: 'uservendor',
-        component: UservendorComponent,
         canActivate: [AuthGuard],
-        title: 'User Vendor',
-        data: { roles: ['admin'] }
+        data: { roles: ['user', 'admin'] }
       },
       {
         path: 'usercategory',
         component: UsercategoryComponent,
-        canActivate: [AuthGuard],
         title: 'Category',
+        canActivate: [AuthGuard],
         data: { roles: ['admin'] }
       },
-       {
+      {
         path: 'userorder',
         component: UserorderComponent,
-        canActivate: [AuthGuard],
         title: 'User Orders',
+        canActivate: [AuthGuard],
         data: { roles: ['user', 'admin'] }
       },
       {
         path: 'userorder/:id',
         component: UserorderComponent,
-        canActivate: [AuthGuard],
         title: 'User Order Details',
-        data: { roles: ['user', 'admin'] }
-      }
-    ]
-  },
-
-  // Farmer User Area (Accessible by 'user' role and 'admin')
-  {
-    path: 'users',
-    title: 'Users',
-    component: UsersComponent,
-    canActivate: [AuthGuard],
-    data: { roles: ['user', 'admin'] }, // <-- allow user and admin roles
-    children: [
-      {
-        path: 'farmuser',
-        component: FarmuserComponent,
         canActivate: [AuthGuard],
-        title: 'Farm User',
         data: { roles: ['user', 'admin'] }
+      },
+      {
+        path: 'uservendor',
+        component: UservendorComponent,
+        title: 'User Vendor',
+        canActivate: [AuthGuard],
+        data: { roles: ['admin'] }
       }
-     
     ]
   },
-
-  // Error Page
-  { path: '**', title: '400', component: ErrorComponent },
+  // Error fallback
+  { path: '**', title: '400', component: ErrorComponent }
 ];
