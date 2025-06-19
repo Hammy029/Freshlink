@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SearchService, Product } from './service/search.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -75,7 +76,27 @@ export class SearchComponent {
   }
 
   loadSavedProducts() {
-    this.savedProducts = this.getSavedFromLocal();
+    const localProducts = this.getSavedFromLocal();
+
+    if (localProducts.length === 0) {
+      this.savedProducts = [];
+      return;
+    }
+
+    const requests = localProducts.map(product =>
+      this.searchService.searchByProductId(product._id)
+    );
+
+    forkJoin(requests).subscribe({
+      next: (updated) => {
+        this.savedProducts = updated;
+        localStorage.setItem('savedProducts', JSON.stringify(updated));
+      },
+      error: () => {
+        // fallback if network fails
+        this.savedProducts = localProducts;
+      }
+    });
   }
 
   getSavedFromLocal(): Product[] {
