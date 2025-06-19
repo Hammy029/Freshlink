@@ -17,7 +17,11 @@ export class SearchComponent {
   success: string = '';
   isLoading: boolean = false;
 
-  constructor(private searchService: SearchService) {}
+  savedProducts: Product[] = [];
+
+  constructor(private searchService: SearchService) {
+    this.loadSavedProducts();
+  }
 
   search() {
     this.clearMessages();
@@ -42,22 +46,41 @@ export class SearchComponent {
     });
   }
 
-  saveSearch() {
+  saveToLocal(product: Product) {
     this.clearMessages();
 
-    if (!this.product?._id) {
+    if (!product?._id) {
       this.error = 'No product to save.';
       return;
     }
 
-    this.searchService.saveSearch(this.product._id).subscribe({
-      next: () => {
-        this.success = 'Search saved successfully.';
-      },
-      error: () => {
-        this.error = 'Could not save this search.';
-      }
-    });
+    const saved = this.getSavedFromLocal();
+    const exists = saved.find(p => p._id === product._id);
+
+    if (exists) {
+      this.success = 'Product already saved.';
+      return;
+    }
+
+    saved.push(product);
+    localStorage.setItem('savedProducts', JSON.stringify(saved));
+    this.savedProducts = saved;
+    this.success = 'Product saved locally.';
+  }
+
+  deleteSaved(id: string) {
+    const updated = this.savedProducts.filter(p => p._id !== id);
+    this.savedProducts = updated;
+    localStorage.setItem('savedProducts', JSON.stringify(updated));
+  }
+
+  loadSavedProducts() {
+    this.savedProducts = this.getSavedFromLocal();
+  }
+
+  getSavedFromLocal(): Product[] {
+    const data = localStorage.getItem('savedProducts');
+    return data ? JSON.parse(data) : [];
   }
 
   clearMessages() {
