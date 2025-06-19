@@ -65,6 +65,24 @@ export class UserorderComponent implements OnInit {
   }
 
   /**
+   * ✅ Remove a specific product from an order
+   */
+  removeItemFromOrder(orderId: string, productId: string): void {
+    if (confirm('Remove this product from the order?')) {
+      this.ordersService.removeProductFromOrder(orderId, productId).subscribe({
+        next: () => {
+          alert('🗑️ Product removed from order.');
+          this.loadAllOrders();
+        },
+        error: (err) => {
+          console.error('❌ Failed to remove product from order:', err);
+          alert('❌ Failed to remove product.');
+        },
+      });
+    }
+  }
+
+  /**
    * ✅ Copies product ID and shows toast
    */
   copyToClipboard(text: string | undefined): void {

@@ -25,7 +25,7 @@
 
       <div
         *ngFor="let item of order.items"
-        class="bg-gray-50 p-4 rounded-md border text-sm text-gray-700 grid grid-cols-1 sm:grid-cols-3 gap-4"
+        class="bg-gray-50 p-4 rounded-md border text-sm text-gray-700 grid grid-cols-1 sm:grid-cols-3 gap-4 relative"
       >
         <!-- 🧾 Product Info -->
         <div class="space-y-2">
@@ -63,6 +63,15 @@
             </span>
           </p>
         </div>
+
+        <!-- ❌ Remove Item Button -->
+        <button
+          class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-xs font-semibold"
+          (click)="removeItemFromOrder(order._id, item.product._id)"
+          title="Remove this product"
+        >
+          ✖ Remove
+        </button>
       </div>
     </div>
 
@@ -85,14 +94,11 @@
         <p><span class="font-semibold">Email:</span> {{ order.userId.email || 'N/A' }}</p>
       </div>
 
-      <!-- ❌ Cancel Button -->
+      <!-- 🟢 Status Info -->
       <div class="flex items-end justify-end">
-        <button
-          (click)="cancelOrder(order._id)"
-          class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md transition"
-        >
-          Cancel Order
-        </button>
+        <div class="w-full bg-gray-100 text-gray-400 font-semibold py-2 px-4 rounded-md text-center">
+          Order Active
+        </div>
       </div>
     </div>
   </div>

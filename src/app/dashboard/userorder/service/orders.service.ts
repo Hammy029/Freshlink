@@ -122,4 +122,14 @@ export class OrdersService {
       {}
     );
   }
+
+  /**
+   * ✅ Remove a specific product from an order — now using PATCH to match backend
+   */
+  removeProductFromOrder(orderId: string, productId: string): Observable<Order> {
+    return this.http.patch<Order>(
+      `${this.baseUrl}/${orderId}/remove-item/${productId}`,
+      {}
+    );
+  }
 }
