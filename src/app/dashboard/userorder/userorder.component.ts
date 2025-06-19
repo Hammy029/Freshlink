@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-userorder',
+  standalone: true,
   templateUrl: './userorder.component.html',
   imports: [CommonModule, FormsModule],
   styleUrls: ['./userorder.component.css'],
@@ -20,12 +21,15 @@ export class UserorderComponent implements OnInit {
     private router: Router
   ) {}
 
+  /**
+   * ✅ Lifecycle hook: Load orders
+   */
   ngOnInit(): void {
     this.loadAllOrders();
   }
 
   /**
-   * ✅ Load all orders (admin view)
+   * ✅ Fetch all orders for admin view
    */
   loadAllOrders(): void {
     this.loading = true;
@@ -43,42 +47,42 @@ export class UserorderComponent implements OnInit {
   }
 
   /**
-   * ✅ Admin cancels an order
+   * ✅ Admin cancels an order with confirmation
    */
   cancelOrder(orderId: string): void {
     if (confirm('Are you sure you want to cancel this order?')) {
       this.ordersService.cancelOrder(orderId).subscribe({
         next: () => {
-          alert('Order canceled successfully!');
+          alert('✅ Order canceled successfully!');
           this.loadAllOrders();
         },
         error: (err) => {
-          console.error('Failed to cancel order', err);
-          alert('Failed to cancel order.');
+          console.error('❌ Failed to cancel order:', err);
+          alert('❌ Failed to cancel order.');
         },
       });
     }
   }
 
   /**
-   * ✅ Copy product ID to clipboard with toast
+   * ✅ Copies product ID and shows toast
    */
   copyToClipboard(text: string | undefined): void {
     if (!text) return;
     navigator.clipboard.writeText(text).then(() => {
       this.showCopyToast();
     }).catch(err => {
-      console.error('Clipboard copy failed', err);
+      console.error('❌ Clipboard copy failed:', err);
     });
   }
 
   /**
-   * ✅ Show copy toast temporarily
+   * ✅ Displays toast for 2 seconds
    */
   showCopyToast(): void {
     this.copyToastVisible = true;
     setTimeout(() => {
       this.copyToastVisible = false;
-    }, 2000); // 2 seconds
+    }, 2000);
   }
 }
