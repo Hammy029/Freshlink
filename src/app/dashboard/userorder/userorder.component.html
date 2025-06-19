@@ -27,25 +27,24 @@
             *ngFor="let item of order.items"
             class="bg-gray-50 p-3 rounded-md border text-sm text-gray-700"
           >
-            <p><span class="font-medium">Product:</span> {{ item.product?.name || 'N/A' }}</p>
-
+            <p><span class="font-medium">Product:</span> {{ item.product.title || 'N/A' }}</p>
             <!-- ✅ Copyable Product ID -->
             <p class="flex items-center space-x-2">
               <span class="font-medium">Product ID:</span>
               <span
                 class="bg-gray-200 text-xs text-gray-700 px-2 py-1 rounded cursor-pointer hover:bg-gray-300 transition"
                 title="Click to copy"
-                (click)="copyToClipboard(item.product?._id)"
+                (click)="copyToClipboard(item.product._id)"
               >
-                {{ item.product?._id || 'N/A' }}
+                {{ item.product._id || 'N/A' }}
               </span>
             </p>
 
-            <p><span class="font-medium">Category:</span> {{ item.product?.category?.name || 'N/A' }}</p>
-            <p><span class="font-medium">Farm:</span> {{ item.product?.farm?.name || 'Unknown' }}</p>
-            <p><span class="font-medium">Price:</span> KES {{ item.product?.price || 0 }}</p>
+            <p><span class="font-medium">Category:</span> {{ item.product.category.name || 'N/A' }}</p>
+            <p><span class="font-medium">Farm:</span> {{ item.product.farm.username || 'Unknown' }}</p>
+            <p><span class="font-medium">Price:</span> KES {{ item.product.price || 0 }}</p>
             <p><span class="font-medium">Quantity:</span> {{ item.quantity }}</p>
-            <p><span class="font-medium">Subtotal:</span> KES {{ (item.product?.price || 0) * item.quantity }}</p>
+            <p><span class="font-medium">Subtotal:</span> KES {{ (item.product.price || 0) * item.quantity }}</p>
           </li>
         </ul>
       </div>
@@ -67,8 +66,8 @@
       <!-- 👤 User Info -->
       <div class="text-sm text-gray-800 space-y-1">
         <h4 class="text-indigo-600 font-semibold">Customer Details</h4>
-        <p><span class="font-medium">Name:</span> {{ order.userId?.name || 'N/A' }}</p>
-        <p><span class="font-medium">Email:</span> {{ order.userId?.email || 'N/A' }}</p>
+        <p><span class="font-medium">Name:</span> {{ order.userId.username || 'N/A' }}</p>
+        <p><span class="font-medium">Email:</span> {{ order.userId.email || 'N/A' }}</p>
       </div>
     </div>
 

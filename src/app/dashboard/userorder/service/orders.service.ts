@@ -2,24 +2,56 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// Define types to strengthen typing
-export interface OrderItem {
+// ✅ Strongly typed interfaces for populated data
+export interface PopulatedFarm {
+  _id: string;
+  username: string;
+  email: string;
+  phone_no: string;
+}
+
+export interface PopulatedCategory {
+  _id: string;
+  name: string;
+}
+
+export interface PopulatedProduct {
+  _id: string;
+  title: string;
+  price: number;
+  quantity: number;
+  category: PopulatedCategory;
+  farm: PopulatedFarm;
+}
+
+// ✅ Used when placing an order
+export interface OrderItemInput {
   productId: string;
   quantity: number;
 }
 
+// ✅ Create order DTO for POST
 export interface CreateOrderDto {
-  items: OrderItem[];
+  items: OrderItemInput[];
   grandTotal: number;
 }
 
+// ✅ Returned item format from backend (with populated product)
+export interface OrderItem {
+  product: PopulatedProduct;
+  quantity: number;
+}
+
+// ✅ Full order returned from backend
 export interface Order {
   _id: string;
-  userId: any;
-  items: {
-    product: any;
-    quantity: number;
-  }[];
+  userId: {
+    _id: string;
+    username: string;
+    email: string;
+    phone_no: string;
+  };
+  items: OrderItem[];
   totalAmount: number;
   createdAt: string;
 }
@@ -28,61 +60,61 @@ export interface Order {
   providedIn: 'root',
 })
 export class OrdersService {
-  private baseUrl = 'http://localhost:3000/order'; // ✅ Adjust for production
+  private baseUrl = 'http://localhost:3000/order'; // 🔁 Use environment var in production
 
   constructor(private http: HttpClient) {}
 
   /**
-   * ✅ Create a new order from cart
+   * ✅ Place a new order
    */
   placeOrder(orderData: CreateOrderDto): Observable<Order> {
     return this.http.post<Order>(`${this.baseUrl}`, orderData);
   }
 
   /**
-   * ✅ Update an existing order (admin or owner)
+   * ✅ Update an order (admin/owner)
    */
   updateOrder(id: string, orderData: Partial<CreateOrderDto>): Observable<Order> {
     return this.http.patch<Order>(`${this.baseUrl}/${id}`, orderData);
   }
 
   /**
-   * ✅ Cancel/Delete an order (admin or owner)
+   * ✅ Cancel/delete an order
    */
   cancelOrder(orderId: string): Observable<Order> {
     return this.http.delete<Order>(`${this.baseUrl}/${orderId}`);
   }
 
   /**
-   * ✅ Admin: Get all orders
+   * ✅ Admin: Fetch all orders
    */
   getAllOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.baseUrl}`);
   }
 
   /**
-   * ✅ Logged-in user: Get their own orders
+   * ✅ User: Fetch only their orders
    */
   getMyOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.baseUrl}/my-orders`);
   }
 
   /**
-   * ✅ Farmer: Get orders for products they posted
+   * ✅ Farmer: Fetch orders for their products
    */
   getOrdersForFarmer(): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.baseUrl}/farmer-orders`);
   }
 
   /**
-   * ✅ Get details of a specific order
+   * ✅ Get a specific order by ID
    */
   getOrderById(orderId: string): Observable<Order> {
     return this.http.get<Order>(`${this.baseUrl}/${orderId}`);
   }
 
   /**
-   * ✅ Notify farmer(s) after order placement
+   * ✅ Notify farmers of new order
    */
   notifyFarmer(orderId: string): Observable<{ message: string; orderId: string }> {
     return this.http.post<{ message: string; orderId: string }>(
