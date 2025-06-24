@@ -4,19 +4,19 @@
 
       <!-- Logo -->
       <div class="flex items-center">
-        <a routerLink="/" class="text-2xl font-bold text-white hover:text-red-300">AgroPlatform</a>
+        <a routerLink="/" class="text-2xl font-bold text-white hover:text-red-300">Freshlink</a>
       </div>
 
       <!-- Desktop Navigation + Auth Actions -->
       <div class="hidden md:flex items-center space-x-6">
         <!-- Public Links -->
         <a routerLink="/" routerLinkActive="text-[ff2c2c]" class="hover:text-[red-300] transition">Home</a>
-        <a routerLink="/about" routerLinkActive="text-red-300" class="hover:text-red-300 transition">About</a>
-        <a routerLink="/services" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Services</a>
+       <!-- <a routerLink="/about" routerLinkActive="text-red-300" class="hover:text-red-300 transition">About</a>
+        <a routerLink="/services" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Services</a>-->
         <a routerLink="/farmer" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Farmer</a>
         <a routerLink="/cart" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Cart</a>
         <a routerLink="/contact" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Contact</a>
-        <a routerLink="/blogs" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Blogs</a>
+        <!--<a routerLink="/blogs" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Blogs</a>-->
 
         <!-- Role-Based Navigation -->
         <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Dashboard</a>
