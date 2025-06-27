@@ -41,7 +41,7 @@ export class UserorderComponent implements OnInit {
         console.log('Admin orders:', this.orders);
       },
       error: (err) => {
-        console.error('Failed to load orders', err);
+        console.error('❌ Failed to load orders:', err);
         this.loading = false;
       },
     });
@@ -59,7 +59,7 @@ export class UserorderComponent implements OnInit {
         },
         error: (err) => {
           console.error('❌ Failed to cancel order:', err);
-          alert('❌ Failed to cancel order.');
+          alert(`❌ Failed to cancel order: ${err.error?.message || 'Unknown error'}`);
         },
       });
     }
@@ -77,7 +77,8 @@ export class UserorderComponent implements OnInit {
         },
         error: (err) => {
           console.error('❌ Failed to remove product from order:', err);
-          alert('❌ Failed to remove product.');
+          const msg = err.error?.message || 'Unknown error occurred';
+          alert(`❌ Failed to remove product: ${msg}`);
         },
       });
     }
