@@ -17,7 +17,7 @@ export class FarmerComponent implements OnInit {
   Math: any;
 
   // ✅ Pagination properties
-  itemsPerPage: number = 12;
+  itemsPerPage: number = 9;
   currentPage: number = 1;
 
   constructor(
@@ -107,12 +107,21 @@ export class FarmerComponent implements OnInit {
 
     this.cartService.addToCart(cartItem);
 
-    // Update product view after adding to cart
-    product._originalQuantity -= quantity;
-    product.quantity = product._originalQuantity;
-    product.orderQuantity = 1;
+    // 🔁 Update backend to reduce product quantity
+    this.farmService.reduceProductQuantity(product._id, quantity).subscribe({
+      next: (updatedProduct) => {
+        // Sync local view with backend
+        product._originalQuantity = updatedProduct.quantity;
+        product.quantity = updatedProduct.quantity;
+        product.orderQuantity = 1;
 
-    alert(`${product.title} added to cart successfully!`);
+        alert(`${product.title} added to cart successfully!`);
+      },
+      error: (err) => {
+        console.error('Failed to reduce product quantity:', err);
+        alert('Error: Could not update product quantity on server.');
+      }
+    });
   }
 
   getTotalPrice(product: any): number {

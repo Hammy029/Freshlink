@@ -111,4 +111,15 @@ export class FarmService {
   isAdmin(): boolean {
     return this.currentUser?.role === 'admin';
   }
+
+  // ✅ NEW: Reduce quantity of a product (after add-to-cart)
+  reduceProductQuantity(productId: string, quantity: number): Observable<FarmProduct> {
+    return this.http.patch<FarmProduct>(
+      `${this.baseUrl}/${productId}/reduce-quantity`,
+      { quantity },
+      {
+        headers: this.getAuthHeaders()
+      }
+    );
+  }
 }
