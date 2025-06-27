@@ -48,7 +48,7 @@ export const routes: Routes = [
   // Auth Pages
   { path: 'login', title: 'Login', component: LoginComponent },
   { path: 'register', title: 'Register', component: RegisterComponent },
-  { path: 'google-callback', canActivate: [AuthGuard], title: 'Google', component: GoogleCallbackComponent },
+  { path: 'google-callback', title: 'Google', component: GoogleCallbackComponent },
   { path: 'forgot-password', title: 'Forget password', component: ForgotPasswordComponent },
   { path: 'update-password', title: 'Update password', component: UpdatePasswordComponent },
   { path: 'reset-password', title: 'Reset password', component: ResetPasswordComponent },

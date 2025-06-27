@@ -14,12 +14,6 @@ interface LoginResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  markAuthenticated /**
-   * REGISTER a new user
-   */ () {
-    throw new Error('Method not implemented.');
-  }
-
   private apiUrl = 'http://localhost:3000/auth'; // Adjust to your backend URL
   private currentUserRole = new BehaviorSubject<string | null>(null);
   private authState = new BehaviorSubject<boolean>(false);
@@ -57,6 +51,7 @@ export class AuthService {
       tap((res) => {
         this.setToken(res.access_token);
         this.setUser(res.user);
+        this.markAuthenticated(); // ✅ mark as logged in
       })
     );
   }
@@ -129,18 +124,15 @@ export class AuthService {
     this.currentUserRole.next(decoded?.role ?? null);
     this.authState.next(true);
 
-    // Set minimal user info from token or combine with existing
     if (decoded && decoded.email) {
       const existingUser = this.getUser();
-
       const userInfo = {
-        _id: decoded.sub || existingUser?._id || null, // Ensure _id is preserved
+        _id: decoded.sub || existingUser?._id || null,
         username: decoded.username || existingUser?.username || '',
         email: decoded.email,
         role: decoded.role || 'user',
-        phone_no: existingUser?.phone_no || null, // optional extra
+        phone_no: existingUser?.phone_no || null,
       };
-
       this.setUser(userInfo);
     }
   }
@@ -215,5 +207,12 @@ export class AuthService {
 
     const now = Math.floor(Date.now() / 1000);
     return decoded.exp > now;
+  }
+
+  /**
+   * Explicitly set auth state to true
+   */
+  markAuthenticated(): void {
+    this.authState.next(true);
   }
 }
