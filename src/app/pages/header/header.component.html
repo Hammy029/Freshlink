@@ -16,6 +16,7 @@
 
         <!-- Role-based Links -->
         <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Dashboard</a>
+        <a *ngIf="isLoggedIn() && userRole === 'admin'" routerLink="/admin" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Admin</a>
 
         <!-- Auth Links -->
         <a *ngIf="!isLoggedIn()" routerLink="/login" class="hover:text-red-300 transition">Login</a>
@@ -52,6 +53,7 @@
 
       <!-- Role-based -->
       <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Dashboard</a>
+      <a *ngIf="isLoggedIn() && userRole === 'admin'" routerLink="/admin" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Admin</a>
 
       <!-- Auth -->
       <a *ngIf="!isLoggedIn()" routerLink="/login" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Login</a>

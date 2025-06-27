@@ -10,7 +10,6 @@ import { DashboardComponent } from "./dashboard/dashboard.component";
 import { UsercategoryComponent } from "./dashboard/usercategory/usercategory.component";
 import { UserfarmerComponent } from "./dashboard/userfarmer/userfarmer.component";
 import { UserorderComponent } from "./dashboard/userorder/userorder.component";
-import { UservendorComponent } from "./dashboard/uservendor/uservendor.component";
 import { AboutComponent } from "./pages/about/about.component";
 import { BlogsComponent } from "./pages/blogs/blogs.component";
 import { ChatComponent } from "./pages/chat/chat.component";
@@ -24,6 +23,8 @@ import { ProduceComponent } from "./pages/produce/produce.component";
 import { ServicesComponent } from "./pages/services/services.component";
 import { CartComponent } from "./pages/cart/cart.component";
 import { SearchComponent } from "./dashboard/search/search.component";
+import { AdminComponent } from "./admin/admin/admin.component";
+import { UsersComponent } from "./admin/users/users.component";
 
 export const routes: Routes = [
   // Public Pages
@@ -73,13 +74,7 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: { roles: ['user', 'admin'] }
       },
-      {
-        path: 'usercategory',
-        component: UsercategoryComponent,
-        title: 'Category',
-        canActivate: [AuthGuard],
-        data: { roles: ['admin'] }
-      },
+      
       {
         path: 'userorder',
         component: UserorderComponent,
@@ -93,15 +88,32 @@ export const routes: Routes = [
         title: 'User Order Details',
         canActivate: [AuthGuard],
         data: { roles: ['user', 'admin'] }
-      },
-      {
-        path: 'uservendor',
-        component: UservendorComponent,
-        title: 'User Vendor',
-        canActivate: [AuthGuard],
-        data: { roles: ['admin'] }
       }
     ]
+  },
+  {
+    path: 'admin',
+    title: 'Admin',
+    component: AdminComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['admin'] },
+    children: [
+      {
+        path: 'usercategory',
+        component: UsercategoryComponent,
+        title: 'Category',
+        canActivate: [AuthGuard],
+        data: { roles: ['admin'] }
+      },
+      {
+        path:'users', 
+        title:'Users', 
+        component:UsersComponent,
+        data: { roles: ['admin']}
+      }
+
+    ]
+
   },
   // Error fallback
   { path: '**', title: '400', component: ErrorComponent }
