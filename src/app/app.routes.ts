@@ -11,16 +11,11 @@ import { UsercategoryComponent } from "./dashboard/usercategory/usercategory.com
 import { UserfarmerComponent } from "./dashboard/userfarmer/userfarmer.component";
 import { UserorderComponent } from "./dashboard/userorder/userorder.component";
 import { AboutComponent } from "./pages/about/about.component";
-import { BlogsComponent } from "./pages/blogs/blogs.component";
-import { ChatComponent } from "./pages/chat/chat.component";
 import { ContactComponent } from "./pages/contact/contact.component";
 import { ErrorComponent } from "./pages/error/error.component";
 import { FarmerComponent } from "./pages/farmer/farmer.component";
 import { HomeComponent } from "./pages/home/home.component";
 import { OrdersComponent } from "./pages/orders/orders.component";
-import { PaymentComponent } from "./pages/payment/payment.component";
-import { ProduceComponent } from "./pages/produce/produce.component";
-import { ServicesComponent } from "./pages/services/services.component";
 import { CartComponent } from "./pages/cart/cart.component";
 import { SearchComponent } from "./dashboard/search/search.component";
 import { AdminComponent } from "./admin/admin/admin.component";
@@ -31,18 +26,13 @@ export const routes: Routes = [
   { path: '', title: 'Home', component: HomeComponent },
   { path: 'about', title: 'About', component: AboutComponent },
   { path: 'contact', title: 'Contact', component: ContactComponent },
-  { path: 'services', title: 'Services', component: ServicesComponent },
-  { path: 'blogs', title: 'Blogs', component: BlogsComponent },
 
   // Farmer/Vendor Info
   { path: 'farmer', title: 'Farmer', component: FarmerComponent },
-  { path: 'produce', title: 'Produce', component: ProduceComponent },
   {path:'cart', title:'Cart', component:CartComponent},
 
   // Order & Payment
-  { path: 'payment', title: 'Payment', component: PaymentComponent },
   { path: 'orders', title: 'Orders', component: OrdersComponent },
-  { path: 'chat', title: 'Chat', component: ChatComponent },
 
   // Auth Pages
   { path: 'login', title: 'Login', component: LoginComponent },
