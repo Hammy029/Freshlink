@@ -10,6 +10,7 @@ interface ProductPayload {
   quantity: number;
   price: number;
   description: string;
+  imageUrl?: string; // ✅ Added support for image
   status?: 'Available' | 'Sold';
   farm?: string;
 }
@@ -26,7 +27,8 @@ export class UserfarmerComponent implements OnInit {
     category: '',
     quantity: 0,
     price: 0,
-    description: ''
+    description: '',
+    imageUrl: '' // ✅ Initialize
   };
 
   products: any[] = [];
@@ -34,7 +36,7 @@ export class UserfarmerComponent implements OnInit {
   editingProduct: any = null;
   showAddForm: boolean = false;
   isAdmin: boolean = false;
-  isSubmitting: boolean = false; // ✅ Prevents multiple submits
+  isSubmitting: boolean = false;
 
   constructor(
     private categoryService: UsercategoryService,
@@ -70,7 +72,7 @@ export class UserfarmerComponent implements OnInit {
 
   toggleAddForm(): void {
     this.showAddForm = !this.showAddForm;
-    this.editingProduct = null; // close edit form if open
+    this.editingProduct = null;
   }
 
   postProduct(): void {
@@ -99,7 +101,6 @@ export class UserfarmerComponent implements OnInit {
         this.showAddForm = false;
         this.isSubmitting = false;
 
-        // ✅ Optional: reset native form element to clear residual validation
         const formEl = document.querySelector('form');
         if (formEl) (formEl as HTMLFormElement).reset();
       },
@@ -116,7 +117,8 @@ export class UserfarmerComponent implements OnInit {
       category: '',
       quantity: 0,
       price: 0,
-      description: ''
+      description: '',
+      imageUrl: ''
     };
   }
 
@@ -141,7 +143,7 @@ export class UserfarmerComponent implements OnInit {
 
   startEdit(prod: any): void {
     this.editingProduct = { ...prod };
-    this.showAddForm = false; // hide add form when editing
+    this.showAddForm = false;
   }
 
   cancelEdit(): void {
@@ -158,6 +160,7 @@ export class UserfarmerComponent implements OnInit {
       price: Number(this.editingProduct.price),
       quantity: Number(this.editingProduct.quantity),
       category: this.editingProduct.category,
+      imageUrl: this.editingProduct.imageUrl, // ✅ Include updated image
       status: this.editingProduct.status || 'Available'
     };
 

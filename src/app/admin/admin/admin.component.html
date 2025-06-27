@@ -3,32 +3,33 @@
   <header class="bg-white shadow sticky top-16 z-40">
     <nav class="flex flex-col sm:flex-row justify-center sm:space-x-4 bg-gray-50 border-b border-gray-200">
       <a
-        routerLink="/dashboard/userfarmer"
+        routerLink="/admin/users"
         routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
         class="px-4 py-3 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
       >
-        User Farmer
+        Users
       </a>
       <a
-        routerLink="/dashboard/userorder"
+        routerLink="/admin/usercategory"
         routerLinkActive="text-blue-600 border-b-2 sm:border-b-0 sm:border-r-2 border-blue-600"
         class="px-4 py-3 text-gray-700 hover:text-blue-600 transition whitespace-nowrap"
       >
-        Orders
+        Categories
       </a>
-
     </nav>
   </header>
 
   <!-- Welcome Section -->
   <main class="flex-1 overflow-y-auto p-6">
-    <div *ngIf="isBaseDashboardRoute" class="text-center mt-20 space-y-4">
-      <h1 class="text-3xl sm:text-4xl font-bold text-blue-700">Welcome to Your Control Panel</h1>
-      <p class="text-gray-600 text-base sm:text-lg">Manage your farm, vendors, orders, and services all in one place.</p>
-      <p class="text-gray-500">Use the navigation above to switch between sections.</p>
+    <div *ngIf="isBaseRoute" class="text-center mt-20 space-y-4">
+      <h1 class="text-3xl sm:text-4xl font-bold text-blue-700">Welcome to Your Admin Panel</h1>
+      <p class="text-gray-600 text-base sm:text-lg">
+        Manage users, categories, platform settings, and more.
+      </p>
+      <p class="text-gray-500">Use the top navigation to access specific sections.</p>
       <div class="mt-6">
         <a
-          routerLink="/dashboard/userorder"
+          routerLink="/admin/users"
           class="inline-block bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition"
         >
           Get Started

@@ -3,12 +3,13 @@ import { OrdersService, Order } from './service/orders.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SearchComponent } from '../search/search.component';
 
 @Component({
   selector: 'app-userorder',
   standalone: true,
   templateUrl: './userorder.component.html',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SearchComponent],
   styleUrls: ['./userorder.component.css'],
 })
 export class UserorderComponent implements OnInit {

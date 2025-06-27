@@ -16,8 +16,7 @@ export class FarmerComponent implements OnInit {
   errorMessage = '';
   Math: any;
 
-  // ✅ Pagination properties
-  itemsPerPage: number = 12;
+  itemsPerPage: number = 9;
   currentPage: number = 1;
 
   constructor(
@@ -37,7 +36,8 @@ export class FarmerComponent implements OnInit {
           ...product,
           _originalQuantity: product.quantity,
           quantity: product.quantity,
-          orderQuantity: 1
+          orderQuantity: 1,
+          imageUrl: product.imageUrl || '' // ✅ Include imageUrl for use in UI
         }));
       },
       error: (err) => {
@@ -47,7 +47,6 @@ export class FarmerComponent implements OnInit {
     });
   }
 
-  // ✅ Pagination logic
   paginatedProducts(): any[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.products.slice(start, start + this.itemsPerPage);
@@ -102,17 +101,25 @@ export class FarmerComponent implements OnInit {
       price: product.price,
       quantity: quantity,
       total: product.price * quantity,
-      availableQuantity: product._originalQuantity
+      availableQuantity: product._originalQuantity,
+      imageUrl: product.imageUrl || '' // ✅ Pass image to cart if needed
     };
 
     this.cartService.addToCart(cartItem);
 
-    // Update product view after adding to cart
-    product._originalQuantity -= quantity;
-    product.quantity = product._originalQuantity;
-    product.orderQuantity = 1;
+    this.farmService.reduceProductQuantity(product._id, quantity).subscribe({
+      next: (updatedProduct) => {
+        product._originalQuantity = updatedProduct.quantity;
+        product.quantity = updatedProduct.quantity;
+        product.orderQuantity = 1;
 
-    alert(`${product.title} added to cart successfully!`);
+        alert(`${product.title} added to cart successfully!`);
+      },
+      error: (err) => {
+        console.error('Failed to reduce product quantity:', err);
+        alert('Error: Could not update product quantity on server.');
+      }
+    });
   }
 
   getTotalPrice(product: any): number {
