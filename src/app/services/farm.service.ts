@@ -15,6 +15,8 @@ export interface FarmProduct {
 }
 
 export interface User {
+  username: any;
+  phone_no: any;
   _id: string;
   role: 'admin' | 'user';
 }
