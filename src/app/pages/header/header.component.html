@@ -2,32 +2,27 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
 
-      <!-- Logo -->
+      <!-- 🌱 Logo -->
       <div class="flex items-center">
         <a routerLink="/" class="text-2xl font-bold text-white hover:text-red-300">Freshlink</a>
       </div>
 
-      <!-- Desktop Navigation + Auth Actions -->
+      <!-- 🖥️ Desktop Nav -->
       <div class="hidden md:flex items-center space-x-6">
-        <!-- Public Links -->
-        <a routerLink="/" routerLinkActive="text-[ff2c2c]" class="hover:text-[red-300] transition">Home</a>
-       <!-- <a routerLink="/about" routerLinkActive="text-red-300" class="hover:text-red-300 transition">About</a>
-        <a routerLink="/services" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Services</a>-->
+        <a routerLink="/" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Home</a>
         <a routerLink="/farmer" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Farmer</a>
         <a routerLink="/cart" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Cart</a>
         <a routerLink="/contact" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Contact</a>
-        <!--<a routerLink="/blogs" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Blogs</a>-->
 
-        <!-- Role-Based Navigation -->
+        <!-- Role-based Links -->
         <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Dashboard</a>
-        <a *ngIf="isLoggedIn() && userRole === 'admin'" routerLink="/admin" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Admin</a>
 
-        <!-- Auth -->
+        <!-- Auth Links -->
         <a *ngIf="!isLoggedIn()" routerLink="/login" class="hover:text-red-300 transition">Login</a>
         <button *ngIf="isLoggedIn()" (click)="logout()" class="hover:text-red-300 transition">Logout</button>
       </div>
 
-      <!-- Mobile Toggle -->
+      <!-- 📱 Mobile Toggle -->
       <div class="md:hidden">
         <button (click)="toggleMobileMenu()" class="focus:outline-none">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
@@ -40,42 +35,25 @@
     </div>
   </div>
 
-  <!-- Mobile Menu -->
+  <!-- 📱 Mobile Menu -->
   <div *ngIf="isMobileMenuOpen" class="md:hidden fixed inset-0 bg-green-700 bg-opacity-95 z-50 p-4 flex flex-col">
     <button (click)="closeMobileMenu()" class="self-end text-white text-3xl font-bold focus:outline-none">
       &times;
     </button>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    <!-- Desktop Nav -->
-    <nav class="hidden md:flex gap-6 text-sm font-medium">
-      <a routerLink="/" class="hover:text-green-200">Home</a>
-      <a routerLink="/about" class="hover:text-green-200">About</a>
-      <a routerLink="/services" class="hover:text-green-200">Services</a>
-      <a routerLink="/blogs" class="hover:text-green-200">Blogs</a>
-      <a routerLink="/contact" class="hover:text-green-200">Contact</a>
-    </nav>
-=======
-    <!-- Mobile Links -->
-=======
->>>>>>> 157e2ba98316f478699ad690fd9a64d71d423e97
     <nav class="mt-4 space-y-6 flex flex-col">
       <a routerLink="/" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Home</a>
       <a routerLink="/about" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">About</a>
       <a routerLink="/services" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Services</a>
       <a routerLink="/farmer" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Farmer</a>
-      <a routerLink="/cart" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">cart</a>
+      <a routerLink="/cart" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Cart</a>
       <a routerLink="/contact" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Contact</a>
       <a routerLink="/blogs" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Blogs</a>
 
-      <!-- Role-Based Links -->
+      <!-- Role-based -->
       <a *ngIf="isLoggedIn()" routerLink="/dashboard" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Dashboard</a>
-<<<<<<< HEAD=======
-      <a *ngIf="isLoggedIn() && userRole === 'admin'" routerLink="/admin" routerLinkActive="text-red-300" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Admin</a>
->>>>>>> 157e2ba98316f478699ad690fd9a64d71d423e97
 
-      <!-- Auth Buttons -->
+      <!-- Auth -->
       <a *ngIf="!isLoggedIn()" routerLink="/login" (click)="closeMobileMenu()" class="block text-white hover:text-red-300 text-xl">Login</a>
       <button *ngIf="isLoggedIn()" (click)="logout(); closeMobileMenu()" class="block text-left text-white hover:text-red-300 text-xl">Logout</button>
     </nav>

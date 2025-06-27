@@ -22,7 +22,6 @@ import { OrdersComponent } from "./pages/orders/orders.component";
 import { PaymentComponent } from "./pages/payment/payment.component";
 import { ProduceComponent } from "./pages/produce/produce.component";
 import { ServicesComponent } from "./pages/services/services.component";
-import { VendorComponent } from "./pages/vendor/vendor.component";
 import { CartComponent } from "./pages/cart/cart.component";
 import { SearchComponent } from "./dashboard/search/search.component";
 
@@ -36,7 +35,6 @@ export const routes: Routes = [
 
   // Farmer/Vendor Info
   { path: 'farmer', title: 'Farmer', component: FarmerComponent },
-  { path: 'vendor', title: 'Vendor', component: VendorComponent },
   { path: 'produce', title: 'Produce', component: ProduceComponent },
   {path:'cart', title:'Cart', component:CartComponent},
 

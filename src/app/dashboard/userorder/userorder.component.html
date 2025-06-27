@@ -1,5 +1,6 @@
-<h2 class="text-2xl font-bold mb-6 text-gray-800">All Orders (Admin View)</h2>
-
+<h2 class="text-2xl font-bold mb-6 text-gray-800"></h2>
+    <app-search></app-search>
+<h2 class="text-2xl font-bold mb-6 text-gray-800">All orders</h2>
 <!-- ✅ Toast Notification -->
 <div
   *ngIf="copyToastVisible"
@@ -8,6 +9,7 @@
   ✅ Product ID copied!
 </div>
 
+
 <!-- 🌀 Loading spinner -->
 <div *ngIf="loading" class="text-center text-indigo-600 font-medium my-4">
   Loading orders...
@@ -15,10 +17,12 @@
 
 <!-- ✅ Orders Display -->
 <div *ngIf="!loading && orders.length > 0; else noOrders" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
   <div
     *ngFor="let order of orders"
     class="bg-white border rounded-xl shadow-sm p-4 hover:shadow-md transition-all flex flex-col justify-between space-y-6"
   >
+
     <!-- 🛒 Ordered Products -->
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-indigo-700">Ordered Products</h3>
@@ -43,7 +47,7 @@
           <p><span class="font-semibold">Category:</span> {{ item.product.category.name || 'N/A' }}</p>
         </div>
 
-        <!-- 👨‍🌾 Farm Owner Info -->
+        <!--  Farm Owner Info -->
         <div class="space-y-2">
           <p class="font-semibold text-indigo-600">Farm Owner</p>
           <p><span class="font-semibold">Name:</span> {{ item.product.farm.username || 'Unknown' }}</p>
@@ -51,7 +55,7 @@
           <p><span class="font-semibold">Phone:</span> {{ item.product.farm.phone_no || 'N/A' }}</p>
         </div>
 
-        <!-- 💰 Purchase Info -->
+        <!-- Purchase Info -->
         <div class="space-y-2">
           <p class="font-semibold text-indigo-600">Purchase Info</p>
           <p><span class="font-semibold">Price:</span> KES {{ item.product.price || 0 }}</p>
@@ -75,7 +79,7 @@
       </div>
     </div>
 
-    <!-- 📦 Order Summary -->
+    <!-- Order Summary -->
     <div class="border-t pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-800">
       <div class="space-y-1">
         <h4 class="text-indigo-600 font-semibold">Order Info</h4>
@@ -87,7 +91,7 @@
         </p>
       </div>
 
-      <!-- 👤 Customer Info -->
+      <!-- Customer Info -->
       <div class="space-y-1">
         <h4 class="text-indigo-600 font-semibold">Customer</h4>
         <p><span class="font-semibold">Name:</span> {{ order.userId.username || 'N/A' }}</p>
