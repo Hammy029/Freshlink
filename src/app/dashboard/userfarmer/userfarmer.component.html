@@ -3,6 +3,7 @@
   <h3 class="text-xl font-semibold mb-4 text-gray-800">Edit Product</h3>
   <form (ngSubmit)="updateProduct()" #updateForm="ngForm" class="space-y-4">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Title -->
       <div>
         <label for="editTitle" class="block text-sm font-medium text-gray-700">Product Title</label>
         <input
@@ -15,6 +16,7 @@
         />
       </div>
 
+      <!-- Category -->
       <div>
         <label for="editCategory" class="block text-sm font-medium text-gray-700">Category</label>
         <select
@@ -29,6 +31,7 @@
         </select>
       </div>
 
+      <!-- Quantity -->
       <div>
         <label for="editQuantity" class="block text-sm font-medium text-gray-700">Quantity</label>
         <input
@@ -42,6 +45,7 @@
         />
       </div>
 
+      <!-- Price -->
       <div>
         <label for="editPrice" class="block text-sm font-medium text-gray-700">Price (Ksh)</label>
         <input
@@ -54,6 +58,22 @@
           required
           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
         />
+      </div>
+
+      <!-- Image URL -->
+      <div class="md:col-span-2">
+        <label for="editImageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
+        <input
+          id="editImageUrl"
+          name="imageUrl"
+          type="text"
+          [(ngModel)]="editingProduct.imageUrl"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          placeholder="https://example.com/image.jpg"
+        />
+        <div *ngIf="editingProduct.imageUrl" class="mt-2">
+          <img [src]="editingProduct.imageUrl" alt="Preview" class="w-32 h-20 object-cover border rounded" />
+        </div>
       </div>
     </div>
 
@@ -105,6 +125,7 @@
   <h2 class="text-lg font-semibold mb-4 text-gray-800">Add New Product</h2>
   <form (ngSubmit)="postProduct()" #addForm="ngForm" class="space-y-4" autocomplete="off">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Title -->
       <div>
         <label for="title" class="block text-sm font-medium text-gray-700">Product Title</label>
         <input
@@ -120,6 +141,7 @@
         <p *ngIf="title.invalid && title.touched" class="text-red-500 text-sm">Product title is required.</p>
       </div>
 
+      <!-- Category -->
       <div>
         <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
         <select
@@ -137,6 +159,7 @@
         <p *ngIf="category.invalid && category.touched" class="text-red-500 text-sm">Category is required.</p>
       </div>
 
+      <!-- Quantity -->
       <div>
         <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
         <input
@@ -153,6 +176,7 @@
         <p *ngIf="quantity.invalid && quantity.touched" class="text-red-500 text-sm">Quantity is required.</p>
       </div>
 
+      <!-- Price -->
       <div>
         <label for="price" class="block text-sm font-medium text-gray-700">Price (Ksh)</label>
         <input
@@ -168,6 +192,23 @@
           [ngClass]="{ 'border-red-500': price.invalid && price.touched }"
         />
         <p *ngIf="price.invalid && price.touched" class="text-red-500 text-sm">Price is required.</p>
+      </div>
+
+      <!-- Image URL -->
+      <div class="md:col-span-2">
+        <label for="imageUrl" class="block text-sm font-medium text-gray-700">Image URL</label>
+        <input
+          id="imageUrl"
+          name="imageUrl"
+          type="text"
+          [(ngModel)]="product.imageUrl"
+          #imageUrl="ngModel"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          placeholder="https://example.com/image.jpg"
+        />
+        <div *ngIf="product.imageUrl" class="mt-2">
+          <img [src]="product.imageUrl" alt="Preview" class="w-32 h-20 object-cover border rounded" />
+        </div>
       </div>
     </div>
 
@@ -204,6 +245,7 @@
     <table class="min-w-full text-left text-sm text-gray-700">
       <thead class="border-b font-medium bg-gray-50">
         <tr>
+          <th class="px-4 py-2">Image</th>
           <th class="px-4 py-2">Title</th>
           <th class="px-4 py-2">Category</th>
           <th class="px-4 py-2">Qty</th>
@@ -214,6 +256,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let prod of products" class="border-b hover:bg-gray-50">
+          <td class="px-4 py-2">
+            <img *ngIf="prod.imageUrl" [src]="prod.imageUrl" alt="Image" class="w-16 h-12 object-cover rounded border" />
+          </td>
           <td class="px-4 py-2">{{ prod.title }}</td>
           <td class="px-4 py-2">{{ getCategoryName(prod.category) }}</td>
           <td class="px-4 py-2">{{ prod.quantity }}</td>
@@ -256,7 +301,7 @@
           </td>
         </tr>
         <tr *ngIf="products.length === 0">
-          <td colspan="6" class="text-center py-4 text-gray-500">No products found.</td>
+          <td colspan="7" class="text-center py-4 text-gray-500">No products found.</td>
         </tr>
       </tbody>
     </table>

@@ -4,12 +4,13 @@ import { Observable, of } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 
 export interface FarmProduct {
-  quantity: any;
   _id: string;
   name: string;
   description?: string;
   price: number;
+  quantity: any;
   status: string;
+  imageUrl?: string; // ✅ NEW: Image URL support
   category?: any;
   farm?: any;
 }
@@ -82,7 +83,7 @@ export class FarmService {
   }
 
   // ✅ Add a new product (auto-linked by backend to current user)
-  addProduct(product: any): Observable<FarmProduct> {
+  addProduct(product: Partial<FarmProduct>): Observable<FarmProduct> {
     return this.http.post<FarmProduct>(this.baseUrl, product, {
       headers: this.getAuthHeaders()
     });

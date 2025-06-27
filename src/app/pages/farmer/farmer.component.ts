@@ -16,7 +16,6 @@ export class FarmerComponent implements OnInit {
   errorMessage = '';
   Math: any;
 
-  // ✅ Pagination properties
   itemsPerPage: number = 9;
   currentPage: number = 1;
 
@@ -37,7 +36,8 @@ export class FarmerComponent implements OnInit {
           ...product,
           _originalQuantity: product.quantity,
           quantity: product.quantity,
-          orderQuantity: 1
+          orderQuantity: 1,
+          imageUrl: product.imageUrl || '' // ✅ Include imageUrl for use in UI
         }));
       },
       error: (err) => {
@@ -47,7 +47,6 @@ export class FarmerComponent implements OnInit {
     });
   }
 
-  // ✅ Pagination logic
   paginatedProducts(): any[] {
     const start = (this.currentPage - 1) * this.itemsPerPage;
     return this.products.slice(start, start + this.itemsPerPage);
@@ -102,15 +101,14 @@ export class FarmerComponent implements OnInit {
       price: product.price,
       quantity: quantity,
       total: product.price * quantity,
-      availableQuantity: product._originalQuantity
+      availableQuantity: product._originalQuantity,
+      imageUrl: product.imageUrl || '' // ✅ Pass image to cart if needed
     };
 
     this.cartService.addToCart(cartItem);
 
-    // 🔁 Update backend to reduce product quantity
     this.farmService.reduceProductQuantity(product._id, quantity).subscribe({
       next: (updatedProduct) => {
-        // Sync local view with backend
         product._originalQuantity = updatedProduct.quantity;
         product.quantity = updatedProduct.quantity;
         product.orderQuantity = 1;
