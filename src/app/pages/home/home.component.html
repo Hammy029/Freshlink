@@ -1,646 +1,152 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Baraton Local Market - Connecting Farmers & Buyers</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f9fafb;
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .gradient-bg::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.1);
-        }
-        
-        .hero-section {
-            padding: 80px 0;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .hero-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 48px;
-            align-items: center;
-        }
-        
-        @media (min-width: 1024px) {
-            .hero-content {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        
-        .hero-text {
-            color: white;
-        }
-        
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 24px;
-        }
-        
-        @media (min-width: 768px) {
-            .hero-title {
-                font-size: 4rem;
-            }
-        }
-        
-        .hero-title .highlight {
-            color: #fbbf24;
-        }
-        
-        .hero-subtitle {
-            font-size: 1.25rem;
-            color: #bbf7d0;
-            margin-bottom: 32px;
-            line-height: 1.8;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        @media (min-width: 640px) {
-            .hero-buttons {
-                flex-direction: row;
-            }
-        }
-        
-        .btn {
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.125rem;
-            text-decoration: none;
-            text-align: center;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-        
-        .btn-primary {
-            background-color: #fbbf24;
-            color: #14532d;
-        }
-        
-        .btn-primary:hover {
-            background-color: #f59e0b;
-            transform: scale(1.05);
-        }
-        
-        .btn-secondary {
-            border: 2px solid white;
-            color: white;
-            background: transparent;
-        }
-        
-        .btn-secondary:hover {
-            background-color: white;
-            color: #14532d;
-        }
-        
-        .hero-visual {
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        @media (min-width: 1024px) {
-            .hero-visual {
-                display: flex;
-            }
-        }
-        
-        .floating-circle {
-            width: 320px;
-            height: 320px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-            animation: float 6s ease-in-out infinite;
-            font-size: 5rem;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .section {
-            padding: 80px 0;
-        }
-        
-        .section-white {
-            background-color: white;
-        }
-        
-        .section-gray {
-            background-color: #f9fafb;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 64px;
-        }
-        
-        .section-title h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 16px;
-        }
-        
-        .section-title p {
-            font-size: 1.25rem;
-            color: #6b7280;
-            max-width: 768px;
-            margin: 0 auto;
-        }
-        
-        .cards-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 32px;
-        }
-        
-        @media (min-width: 768px) {
-            .cards-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        .card {
-            padding: 32px;
-            border-radius: 16px;
-            border: 1px solid;
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-        
-        .card-green {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border-color: #bbf7d0;
-        }
-        
-        .card-blue {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border-color: #bfdbfe;
-        }
-        
-        .card-purple {
-            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-            border-color: #d8b4fe;
-        }
-        
-        .card-icon {
-            font-size: 3rem;
-            margin-bottom: 24px;
-        }
-        
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #111827;
-            margin-bottom: 16px;
-        }
-        
-        .card-text {
-            color: #374151;
-            line-height: 1.7;
-        }
-        
-        .process-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 64px;
-        }
-        
-        @media (min-width: 768px) {
-            .process-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        .process-section {
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-        
-        .process-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        
-        .process-title.green {
-            color: #12d45d;
-        }
-        
-        .process-title.blue {
-            color: #12d45d;
-        }
-        
-        .process-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-        
-        .process-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-        }
-        
-        .step-number {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: white;
-            flex-shrink: 0;
-        }
-        
-        .step-number.green {
-            background-color: #10b981;
-        }
-        
-        .step-number.blue {
-            background-color: #3bf699;
-        }
-        
-        .step-content h4 {
-            font-weight: 600;
-            color: #111827;
-            margin-bottom: 4px;
-        }
-        
-        .step-content p {
-            color: #6b7280;
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 32px;
-        }
-        
-        @media (min-width: 768px) {
-            .features-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-        
-        .feature {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        
-        .feature-icon {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            font-size: 1.5rem;
-        }
-        
-        .feature-icon.green {
-            background-color: #dcfce7;
-        }
-        
-        .feature-icon.blue {
-            background-color: #dbeafe;
-        }
-        
-        .feature-icon.purple {
-            background-color: #f3e8ff;
-        }
-        
-        .feature-icon.yellow {
-            background-color: #fef3c7;
-        }
-        
-        .feature h3 {
-            font-weight: 600;
-            color: #111827;
-        }
-        
-        .feature p {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-        
-        .cta-section {
-            padding: 80px 0;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .cta-content {
-            max-width: 896px;
-            margin: 0 auto;
-        }
-        
-        .cta-title {
-            font-size: 3rem;
-            font-weight: 700;
-            color: white;
-            margin-bottom: 24px;
-        }
-        
-        @media (min-width: 768px) {
-            .cta-title {
-                font-size: 3.5rem;
-            }
-        }
-        
-        .cta-subtitle {
-            font-size: 1.25rem;
-            color: #bbf7d0;
-            margin-bottom: 32px;
-            line-height: 1.7;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            justify-content: center;
-        }
-        
-        @media (min-width: 640px) {
-            .cta-buttons {
-                flex-direction: row;
-            }
-        }
-        
-        .pulse-grow {
-            animation: pulse-grow 2s infinite;
-        }
-        
-        @keyframes pulse-grow {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-    </style>
-</head>
-<body>
-    <!-- Hero Section -->
-    <section class="gradient-bg">
-        <div class="hero-section">
-            <div class="container">
-                <div class="hero-content">
-                    <div class="hero-text">
-                        <h1 class="hero-title">
-                            Baraton <span class="highlight">Local Market</span>
-                        </h1>
-                        <p class="hero-subtitle">
-                            Connecting local farmers directly with buyers in our community. Fresh produce, fair prices, sustainable farming.
-                        </p>
-                        <div class="hero-buttons">
-                            <button class="btn btn-primary pulse-grow">
-                                Start Buying
-                            </button>
-                            <button class="btn btn-secondary">
-                                Join as Farmer
-                            </button>
-                        </div>
-                    </div>
-                    <div class="hero-visual">
-                        <div class="floating-circle">
-                            🌾
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-green-100 via-blue-100 to-purple-100 py-20">
+  <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-10">
+    <div class="md:w-1/2 text-center md:text-left">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        Baraton <span class="text-green-600">Local Market</span>
+      </h1>
+      <p class="text-lg text-gray-700 mb-6">
+        Connecting local farmers directly with buyers in our community. Fresh produce, fair prices, sustainable farming.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+        <a routerLink="/orders" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded shadow text-center">Start Buying</a>
+        <a routerLink="/register" class="bg-white border border-green-600 text-green-600 hover:bg-green-50 font-semibold py-2 px-6 rounded shadow text-center">Join as Farmer</a>
+      </div>
+    </div>
+    <div class="md:w-1/2 flex justify-center">
+      <div class="w-40 h-40 rounded-full bg-white shadow-lg flex items-center justify-center text-5xl animate-bounce">
+        🌾
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- What We Do Section -->
-    <section class="section section-white">
-        <div class="container">
-            <div class="section-title">
-                <h2>What We Do</h2>
-                <p>
-                    We bridge the gap between local farmers and buyers, creating a thriving marketplace that benefits our entire community
-                </p>
-            </div>
-            
-            <div class="cards-grid">
-                <div class="card card-green">
-                    <div class="card-icon">🚜</div>
-                    <h3 class="card-title">For Farmers</h3>
-                    <p class="card-text">
-                        List your fresh produce, set your prices, and connect directly with local buyers. No middlemen, better profits for your hard work.
-                    </p>
-                </div>
-                
-                <div class="card card-blue">
-                    <div class="card-icon">🛒</div>
-                    <h3 class="card-title">For Buyers</h3>
-                    <p class="card-text">
-                        Access fresh, locally-grown produce at competitive prices. Support local farmers while getting the best quality ingredients.
-                    </p>
-                </div>
-                
-                <div class="card card-purple">
-                    <div class="card-icon">🤝</div>
-                    <h3 class="card-title">Community Impact</h3>
-                    <p class="card-text">
-                        Strengthen our local economy, reduce food miles, and build lasting relationships between producers and consumers.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- What We Do -->
+<section class="bg-white py-20">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">What We Do</h2>
+      <p class="text-gray-600">We bridge the gap between local farmers and buyers, creating a thriving marketplace that benefits our entire community</p>
+    </div>
 
-    <!-- How It Works -->
-    <section class="section section-gray">
-        <div class="container">
-            <div class="section-title">
-                <h2>How It Works</h2>
-                <p>Simple steps to get started</p>
-            </div>
-            
-            <div class="process-grid">
-                <!-- Farmers Process -->
-                <div class="process-section">
-                    <h3 class="process-title green">For Farmers</h3>
-                    <div class="process-steps">
-                        <div class="process-step">
-                            <div class="step-number green">1</div>
-                            <div class="step-content">
-                                <h4>Create Your Profile</h4>
-                                <p>Sign up and tell buyers about your farm and growing practices</p>
-                            </div>
-                        </div>
-                        <div class="process-step">
-                            <div class="step-number green">2</div>
-                            <div class="step-content">
-                                <h4>List Your Produce</h4>
-                                <p>Add photos, descriptions, and prices for your fresh produce</p>
-                            </div>
-                        </div>
-                        <div class="process-step">
-                            <div class="step-number green">3</div>
-                            <div class="step-content">
-                                <h4>Receive Orders</h4>
-                                <p>Get notified when buyers place orders and arrange delivery</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Buyers Process -->
-                <div class="process-section">
-                    <h3 class="process-title blue">For Buyers</h3>
-                    <div class="process-steps">
-                        <div class="process-step">
-                            <div class="step-number blue">1</div>
-                            <div class="step-content">
-                                <h4>Browse Products</h4>
-                                <p>Explore fresh produce from local farmers in your area</p>
-                            </div>
-                        </div>
-                        <div class="process-step">
-                            <div class="step-number blue">2</div>
-                            <div class="step-content">
-                                <h4>Place Orders</h4>
-                                <p>Select quantities, add to cart, and checkout securely</p>
-                            </div>
-                        </div>
-                        <div class="process-step">
-                            <div class="step-number blue">3</div>
-                            <div class="step-content">
-                                <h4>Get Fresh Produce</h4>
-                                <p>Pick up from the market or arrange delivery to your location</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="grid gap-8 md:grid-cols-3">
+      <div class="bg-green-100 rounded-lg p-6 shadow">
+        <div class="text-4xl mb-4">🚜</div>
+        <h3 class="text-xl font-bold mb-2">For Farmers</h3>
+        <p>List your fresh produce, set your prices, and connect directly with local buyers. No middlemen, better profits for your hard work.</p>
+      </div>
 
-    <!-- Features -->
-    <section class="section section-white">
-        <div class="container">
-            <div class="section-title">
-                <h2>Why Choose Baraton Market?</h2>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature">
-                    <div class="feature-icon green">
-                        <span>🌱</span>
-                    </div>
-                    <h3>Fresh & Local</h3>
-                    <p>Harvest-fresh produce from local farms</p>
-                </div>
-                
-                <div class="feature">
-                    <div class="feature-icon blue">
-                        <span>💰</span>
-                    </div>
-                    <h3>Fair Prices</h3>
-                    <p>Direct trade means better prices for everyone</p>
-                </div>
-                
-                <div class="feature">
-                    <div class="feature-icon purple">
-                        <span>📱</span>
-                    </div>
-                    <h3>Easy to Use</h3>
-                    <p>Simple platform designed for everyone</p>
-                </div>
-                
-                <div class="feature">
-                    <div class="feature-icon yellow">
-                        <span>🚚</span>
-                    </div>
-                    <h3>Flexible Delivery</h3>
-                    <p>Pickup or delivery options available</p>
-                </div>
-            </div>
-        </div>
-    </section>
+      <div class="bg-blue-100 rounded-lg p-6 shadow">
+        <div class="text-4xl mb-4">🛒</div>
+        <h3 class="text-xl font-bold mb-2">For Buyers</h3>
+        <p>Access fresh, locally-grown produce at competitive prices. Support local farmers while getting the best quality ingredients.</p>
+      </div>
 
-    <!-- Call to Action -->
-   <!-- <section class="gradient-bg">
-        <div class="cta-section">
-            <div class="container">
-                <div class="cta-content">
-                    <h2 class="cta-title">
-                        Ready to Join Baraton Market?
-                    </h2>
-                    <p class="cta-subtitle">
-                        Whether you're growing food or looking for fresh produce, our community is here to support local agriculture
-                    </p>
-                    <div class="cta-buttons">
-                        <button class="btn btn-primary">
-                            Register as Buyer
-                        </button>
-                        <button class="btn btn-secondary">
-                            Register as Farmer
-                        </button>
-                    </div>
-                </div>
+      <div class="bg-purple-100 rounded-lg p-6 shadow">
+        <div class="text-4xl mb-4">🤝</div>
+        <h3 class="text-xl font-bold mb-2">Community Impact</h3>
+        <p>Strengthen our local economy, reduce food miles, and build lasting relationships between producers and consumers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="bg-gray-100 py-20">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">How It Works</h2>
+      <p class="text-gray-600">Simple steps to get started</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-10">
+      <!-- For Farmers -->
+      <div>
+        <h3 class="text-xl font-bold text-green-600 mb-6">For Farmers</h3>
+        <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+            <div>
+              <h4 class="font-semibold">Create Your Profile</h4>
+              <p class="text-sm text-gray-600">Sign up and tell buyers about your farm and growing practices</p>
             </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+            <div>
+              <h4 class="font-semibold">List Your Produce</h4>
+              <p class="text-sm text-gray-600">Add photos, descriptions, and prices for your fresh produce</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+            <div>
+              <h4 class="font-semibold">Receive Orders</h4>
+              <p class="text-sm text-gray-600">Get notified when buyers place orders and arrange delivery</p>
+            </div>
+          </div>
         </div>
-    </section>-->
-</body>
-</html>
+      </div>
+
+      <!-- For Buyers -->
+      <div>
+        <h3 class="text-xl font-bold text-blue-600 mb-6">For Buyers</h3>
+        <div class="space-y-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+            <div>
+              <h4 class="font-semibold">Browse Products</h4>
+              <p class="text-sm text-gray-600">Explore fresh produce from local farmers in your area</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
+            <div>
+              <h4 class="font-semibold">Place Orders</h4>
+              <p class="text-sm text-gray-600">Select quantities, add to cart, and checkout securely</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+            <div>
+              <h4 class="font-semibold">Get Fresh Produce</h4>
+              <p class="text-sm text-gray-600">Pick up from the market or arrange delivery to your location</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="bg-white py-20">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="text-center mb-12">
+      <h2 class="text-3xl font-bold text-gray-900">Why Choose Baraton Market?</h2>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div class="space-y-4">
+        <div class="text-4xl text-green-600">🌱</div>
+        <h3 class="font-semibold text-lg">Fresh & Local</h3>
+        <p class="text-sm text-gray-600">Harvest-fresh produce from local farms</p>
+      </div>
+      <div class="space-y-4">
+        <div class="text-4xl text-blue-600">💰</div>
+        <h3 class="font-semibold text-lg">Fair Prices</h3>
+        <p class="text-sm text-gray-600">Direct trade means better prices for everyone</p>
+      </div>
+      <div class="space-y-4">
+        <div class="text-4xl text-purple-600">📱</div>
+        <h3 class="font-semibold text-lg">Easy to Use</h3>
+        <p class="text-sm text-gray-600">Simple platform designed for everyone</p>
+      </div>
+      <div class="space-y-4">
+        <div class="text-4xl text-yellow-500">🚚</div>
+        <h3 class="font-semibold text-lg">Flexible Delivery</h3>
+        <p class="text-sm text-gray-600">Pickup or delivery options available</p>
+      </div>
+    </div>
+  </div>
+</section>
