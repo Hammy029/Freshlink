@@ -44,6 +44,9 @@ export interface OrderItem {
 
 // ✅ Full order returned from backend
 export interface Order {
+  customerId: string | undefined;
+  buyerId: string | undefined;
+  id: string;
   _id: string;
   userId: {
     _id: string;
@@ -63,6 +66,13 @@ export class OrdersService {
   private baseUrl = 'http://localhost:3000/order'; // 🔁 Use environment var in production
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * ✅ Fetch orders for a specific user by user ID
+   */
+  getUserOrders(currentUserId: string): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.baseUrl}/user/${currentUserId}`);
+  }
 
   /**
    * ✅ Place a new order
@@ -93,7 +103,7 @@ export class OrdersService {
   }
 
   /**
-   * ✅ User: Fetch only their orders
+   * ✅ User: Fetch only their orders (based on token)
    */
   getMyOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.baseUrl}/my-orders`);

@@ -10,7 +10,7 @@ export interface FarmProduct {
   price: number;
   quantity: any;
   status: string;
-  imageUrl?: string; // ✅ NEW: Image URL support
+  imageUrl?: string;
   category?: any;
   farm?: any;
 }
@@ -22,11 +22,26 @@ export interface User {
   role: 'admin' | 'user';
 }
 
+// ✅ Added Order interface for type safety
+export interface Order {
+  _id?: string;
+  id?: string;
+  userId?: string;
+  customerId?: string;
+  buyerId?: string;
+  products: any[];
+  total: number;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class FarmService {
   private baseUrl = 'http://localhost:3000/farm';
+  private ordersUrl = 'http://localhost:3000/orders'; // ✅ Added orders endpoint
   private isBrowser: boolean;
   private currentUser: User | null = null;
 
@@ -51,6 +66,8 @@ export class FarmService {
       'Content-Type': 'application/json'
     });
   }
+
+  // =============== PRODUCT METHODS ===============
 
   // ✅ Public products (no login required)
   getAvailableProductsPublic(): Observable<FarmProduct[]> {
@@ -110,11 +127,6 @@ export class FarmService {
     return this.updateProduct(id, { status: 'Sold' });
   }
 
-  // ✅ Utility: check if current user is admin
-  isAdmin(): boolean {
-    return this.currentUser?.role === 'admin';
-  }
-
   // ✅ NEW: Reduce quantity of a product (after add-to-cart)
   reduceProductQuantity(productId: string, quantity: number): Observable<FarmProduct> {
     return this.http.patch<FarmProduct>(
@@ -124,5 +136,140 @@ export class FarmService {
         headers: this.getAuthHeaders()
       }
     );
+  }
+
+  // =============== ORDER METHODS ===============
+
+  // ✅ Unified order fetch method that switches based on user role
+  getOrders(): Observable<Order[]> {
+    if (!this.currentUser) return of([]); // Not logged in
+
+    const url =
+      this.currentUser.role === 'admin'
+        ? `${this.ordersUrl}/admin/all`
+        : `${this.ordersUrl}/my-orders`;
+
+    return this.http.get<Order[]>(url, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Get all orders (admin only)
+  getAllOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.ordersUrl}/admin/all`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Get current user's orders only
+  getMyOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.ordersUrl}/my-orders`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Get orders by specific user ID (admin only)
+  getUserOrders(userId: string): Observable<Order[]> {
+    return this.http.get<Order[]>(`${this.ordersUrl}/user/${userId}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Create a new order
+  createOrder(orderData: Partial<Order>): Observable<Order> {
+    return this.http.post<Order>(this.ordersUrl, orderData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Update an existing order
+  updateOrder(orderId: string, updatedData: Partial<Order>): Observable<Order> {
+    return this.http.patch<Order>(`${this.ordersUrl}/${orderId}`, updatedData, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Cancel an order
+  cancelOrder(orderId: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.ordersUrl}/${orderId}/cancel`, {}, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Delete an order (admin only)
+  deleteOrder(orderId: string): Observable<any> {
+    return this.http.delete(`${this.ordersUrl}/${orderId}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // ✅ Remove a product from an order
+  removeProductFromOrder(orderId: string, productId: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.ordersUrl}/${orderId}/remove-product`, 
+      { productId }, 
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ✅ Update order status (admin)
+  updateOrderStatus(orderId: string, status: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.ordersUrl}/${orderId}/status`, 
+      { status }, 
+      { headers: this.getAuthHeaders() }
+    );
+  }
+
+  // ✅ Get order by ID
+  getOrderById(orderId: string): Observable<Order> {
+    return this.http.get<Order>(`${this.ordersUrl}/${orderId}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  // =============== UTILITY METHODS ===============
+
+  // ✅ Utility: check if current user is admin
+  isAdmin(): boolean {
+    return this.currentUser?.role === 'admin';
+  }
+
+  // ✅ Get current user info
+  getCurrentUser(): User | null {
+    return this.currentUser;
+  }
+
+  // ✅ Get current user ID
+  getCurrentUserId(): string | null {
+    return this.currentUser?._id || null;
+  }
+
+  // ✅ Check if user can modify a specific order
+  canModifyOrder(order: Order): boolean {
+    if (this.isAdmin()) return true;
+    
+    const currentUserId = this.getCurrentUserId();
+    if (!currentUserId) return false;
+    
+    return order.userId === currentUserId || 
+           order.customerId === currentUserId ||
+           order.buyerId === currentUserId;
+  }
+
+  // ✅ Check if user can modify a specific product
+  canModifyProduct(product: FarmProduct): boolean {
+    if (this.isAdmin()) return true;
+    
+    const currentUserId = this.getCurrentUserId();
+    if (!currentUserId) return false;
+    
+    return product.farm === currentUserId;
+  }
+
+  // ✅ Refresh current user data from localStorage
+  refreshCurrentUser(): void {
+    if (this.isBrowser) {
+      const user = localStorage.getItem('user');
+      this.currentUser = user ? JSON.parse(user) : null;
+    }
   }
 }
