@@ -10,7 +10,7 @@ interface ProductPayload {
   quantity: number;
   price: number;
   description: string;
-  imageUrl?: string; // ✅ Added support for image
+  imageUrl?: string;
   status?: 'Available' | 'Sold';
   farm?: string;
 }
@@ -28,7 +28,7 @@ export class UserfarmerComponent implements OnInit {
     quantity: 0,
     price: 0,
     description: '',
-    imageUrl: '' // ✅ Initialize
+    imageUrl: ''
   };
 
   products: any[] = [];
@@ -37,6 +37,7 @@ export class UserfarmerComponent implements OnInit {
   showAddForm: boolean = false;
   isAdmin: boolean = false;
   isSubmitting: boolean = false;
+  currentUserId: string | null = null; // ✅ Added to track current user
 
   constructor(
     private categoryService: UsercategoryService,
@@ -44,6 +45,7 @@ export class UserfarmerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currentUserId = localStorage.getItem('userId'); // ✅ Get current user ID
     this.isAdmin = this.farmService.isAdmin();
     this.loadCategoriesAndThenProducts();
   }
@@ -61,10 +63,23 @@ export class UserfarmerComponent implements OnInit {
   private fetchProducts(): void {
     this.farmService.getProducts().subscribe({
       next: (data: any[]) => {
-        this.products = data.map(prod => ({
+        let filteredProducts = data.map(prod => ({
           ...prod,
           status: prod.status || 'Available'
         }));
+
+        // ✅ Filter products based on user role
+        if (!this.isAdmin && this.currentUserId) {
+          // Regular users see only their own products
+          filteredProducts = filteredProducts.filter(prod => 
+            prod.farm === this.currentUserId || 
+            prod.farmerId === this.currentUserId ||
+            prod.userId === this.currentUserId
+          );
+        }
+        // ✅ Admins see all products (no filtering)
+
+        this.products = filteredProducts;
       },
       error: err => console.error('Error fetching products:', err)
     });
@@ -79,9 +94,8 @@ export class UserfarmerComponent implements OnInit {
     if (this.isSubmitting) return;
     this.isSubmitting = true;
 
-    const farmerId = localStorage.getItem('userId');
-    if (!farmerId) {
-      console.error('Farmer ID not found in localStorage.');
+    if (!this.currentUserId) {
+      console.error('User ID not found in localStorage.');
       this.isSubmitting = false;
       return;
     }
@@ -90,7 +104,7 @@ export class UserfarmerComponent implements OnInit {
       ...this.product,
       price: Number(this.product.price),
       quantity: Number(this.product.quantity),
-      farm: farmerId,
+      farm: this.currentUserId, // ✅ Use currentUserId instead of farmerId
       status: 'Available'
     };
 
@@ -123,6 +137,12 @@ export class UserfarmerComponent implements OnInit {
   }
 
   markAsSold(id: string): void {
+    // ✅ Check if user can modify this product
+    if (!this.canModifyProduct(id)) {
+      console.error('Unauthorized: Cannot modify this product');
+      return;
+    }
+
     this.farmService.markAsSold(id).subscribe({
       next: () => {
         const item = this.products.find(p => p._id === id);
@@ -133,6 +153,12 @@ export class UserfarmerComponent implements OnInit {
   }
 
   deleteProduct(id: string): void {
+    // ✅ Check if user can modify this product
+    if (!this.canModifyProduct(id)) {
+      console.error('Unauthorized: Cannot delete this product');
+      return;
+    }
+
     this.farmService.deleteProduct(id).subscribe({
       next: () => {
         this.products = this.products.filter(p => p._id !== id);
@@ -142,6 +168,12 @@ export class UserfarmerComponent implements OnInit {
   }
 
   startEdit(prod: any): void {
+    // ✅ Check if user can modify this product
+    if (!this.canModifyProduct(prod._id)) {
+      console.error('Unauthorized: Cannot edit this product');
+      return;
+    }
+
     this.editingProduct = { ...prod };
     this.showAddForm = false;
   }
@@ -152,6 +184,14 @@ export class UserfarmerComponent implements OnInit {
 
   updateProduct(): void {
     if (!this.editingProduct || this.isSubmitting) return;
+    
+    // ✅ Check if user can modify this product
+    if (!this.canModifyProduct(this.editingProduct._id)) {
+      console.error('Unauthorized: Cannot update this product');
+      this.isSubmitting = false;
+      return;
+    }
+
     this.isSubmitting = true;
 
     const updatedPayload: ProductPayload = {
@@ -160,7 +200,7 @@ export class UserfarmerComponent implements OnInit {
       price: Number(this.editingProduct.price),
       quantity: Number(this.editingProduct.quantity),
       category: this.editingProduct.category,
-      imageUrl: this.editingProduct.imageUrl, // ✅ Include updated image
+      imageUrl: this.editingProduct.imageUrl,
       status: this.editingProduct.status || 'Available'
     };
 
@@ -179,6 +219,27 @@ export class UserfarmerComponent implements OnInit {
         this.isSubmitting = false;
       }
     });
+  }
+
+  // ✅ Helper method to check if current user can modify a product
+  private canModifyProduct(productId: string): boolean {
+    if (this.isAdmin) return true; // Admins can modify any product
+    
+    const product = this.products.find(p => p._id === productId);
+    if (!product || !this.currentUserId) return false;
+    
+    // Regular users can only modify their own products
+    return product.farm === this.currentUserId || 
+           product.farmerId === this.currentUserId ||
+           product.userId === this.currentUserId;
+  }
+
+  // ✅ Helper method to check if current user owns a product (for UI display)
+  isOwner(product: any): boolean {
+    if (!this.currentUserId) return false;
+    return product.farm === this.currentUserId || 
+           product.farmerId === this.currentUserId ||
+           product.userId === this.currentUserId;
   }
 
   getCategoryName(category: any): string {
