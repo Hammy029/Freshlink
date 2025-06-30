@@ -24,6 +24,7 @@ export interface User {
 
 // ✅ Added Order interface for type safety
 export interface Order {
+items: any;
   _id?: string;
   id?: string;
   userId?: string;
