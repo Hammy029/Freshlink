@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchComponent } from '../search/search.component';
-import { FarmService, Order } from '../../services/farm.service'; // ⬅️ Use Order from FarmService
+import { FarmService, Order } from '../../services/farm.service';
 
 @Component({
   selector: 'app-userorder',
@@ -21,7 +21,7 @@ export class UserorderComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private farmService: FarmService // ⬅️ Use FarmService for all order operations
+    private farmService: FarmService
   ) {}
 
   ngOnInit(): void {
@@ -64,8 +64,6 @@ export class UserorderComponent implements OnInit {
       error: (err) => {
         console.error('❌ Failed to load user orders:', err);
         this.loading = false;
-
-        // Optional fallback
         this.loadAllOrdersAndFilter();
       },
     });
@@ -74,9 +72,7 @@ export class UserorderComponent implements OnInit {
   private loadAllOrdersAndFilter(): void {
     this.farmService.getAllOrders().subscribe({
       next: (data: Order[]) => {
-        this.orders = data.filter(order =>
-          this.isOwnedByCurrentUser(order)
-        );
+        this.orders = data.filter(order => this.isOwnedByCurrentUser(order));
         this.loading = false;
         console.log('Filtered user orders:', this.orders);
       },
@@ -138,7 +134,6 @@ export class UserorderComponent implements OnInit {
   }
 
   isOrderOwner(order: Order): boolean {
-    if (!this.currentUserId) return false;
     return this.isOwnedByCurrentUser(order);
   }
 
@@ -146,17 +141,23 @@ export class UserorderComponent implements OnInit {
     if (!this.currentUserId) return false;
 
     return (
-      order.userId === this.currentUserId ||
+      (typeof order.userId === 'object' && '_id' in order.userId ? (order.userId as { _id: string })._id : order.userId) === this.currentUserId ||
       order.customerId === this.currentUserId ||
       order.buyerId === this.currentUserId
     );
   }
 
+  /**
+   * ✅ Displays customer info for admin view
+   */
   getOrderOwnerInfo(order: Order): string {
     if (!this.isAdmin) return '';
 
-    const owner = order.userId || order.customerId || order.buyerId;
-    return owner ? `Owner: ${owner}` : 'Owner: Unknown';
+    const user = order.userId;
+    if (user && typeof user === 'object' && 'username' in user && 'email' in user) {
+      return `Ordered by: ${(user as { username: string; email: string }).username} (${(user as { username: string; email: string }).email})`;
+    }
+    return 'Ordered by: Unknown';
   }
 
   copyToClipboard(text: string | undefined): void {
