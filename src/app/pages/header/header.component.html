@@ -2,12 +2,12 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
 
-      <!-- 🌱 Logo -->
+      <!-- Logo -->
       <div class="flex items-center">
         <a routerLink="/" class="text-2xl font-bold text-white hover:text-red-300">Freshlink</a>
       </div>
 
-      <!-- 🖥️ Desktop Nav -->
+      <!--  Desktop Nav -->
       <div class="hidden md:flex items-center space-x-6">
         <a routerLink="/" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Home</a>
         <a routerLink="/farmer" routerLinkActive="text-red-300" class="hover:text-red-300 transition">Farmer</a>
@@ -23,7 +23,7 @@
         <button *ngIf="isLoggedIn()" (click)="logout()" class="hover:text-red-300 transition">Logout</button>
       </div>
 
-      <!-- 📱 Mobile Toggle -->
+      <!-- Mobile Toggle -->
       <div class="md:hidden">
         <button (click)="toggleMobileMenu()" class="focus:outline-none">
           <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
@@ -36,7 +36,7 @@
     </div>
   </div>
 
-  <!-- 📱 Mobile Menu -->
+  <!-- Mobile Menu -->
   <div *ngIf="isMobileMenuOpen" class="md:hidden fixed inset-0 bg-green-700 bg-opacity-95 z-50 p-4 flex flex-col">
     <button (click)="closeMobileMenu()" class="self-end text-white text-3xl font-bold focus:outline-none">
       &times;
