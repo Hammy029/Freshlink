@@ -92,12 +92,13 @@ export class UserorderComponent implements OnInit {
     if (confirm('Are you sure you want to cancel this order?')) {
       this.farmService.cancelOrder(orderId).subscribe({
         next: () => {
-          alert('✅ Order canceled successfully!');
+          this.toast('✅ Order canceled successfully!');
           this.loadOrders();
         },
         error: (err) => {
           console.error('❌ Failed to cancel order:', err);
-          alert(`❌ Failed to cancel order: ${err.error?.message || 'Unknown error'}`);
+          const msg = err.error?.message || 'Unknown error';
+          this.toast(`❌ Cancel failed: ${msg}`);
         },
       });
     }
@@ -105,20 +106,20 @@ export class UserorderComponent implements OnInit {
 
   removeItemFromOrder(orderId: string, productId: string): void {
     if (!this.canModifyOrder(orderId)) {
-      alert('❌ Unauthorized: You cannot modify this order');
+      this.toast('❌ Unauthorized: You cannot modify this order');
       return;
     }
 
     if (confirm('Remove this product from the order?')) {
       this.farmService.removeProductFromOrder(orderId, productId).subscribe({
         next: () => {
-          alert('🗑️ Product removed from order.');
+          this.toast('🗑️ Product removed from order.');
           this.loadOrders();
         },
         error: (err) => {
           console.error('❌ Failed to remove product from order:', err);
           const msg = err.error?.message || 'Unknown error occurred';
-          alert(`❌ Failed to remove product: ${msg}`);
+          this.toast(`❌ Remove failed: ${msg}`);
         },
       });
     }
@@ -152,12 +153,17 @@ export class UserorderComponent implements OnInit {
    */
   getOrderOwnerInfo(order: Order): string {
     if (!this.isAdmin) return '';
+<<<<<<< HEAD
 
     const user = order.userId;
     if (user && typeof user === 'object' && 'username' in user && 'email' in user) {
       return `Ordered by: ${(user as { username: string; email: string }).username} (${(user as { username: string; email: string }).email})`;
     }
     return 'Ordered by: Unknown';
+=======
+    const owner = order.userId || order.customerId || order.buyerId;
+    return owner ? `Owner: ${owner}` : 'Owner: Unknown';
+>>>>>>> d0017c09cfecf842ce93ed3172910d62edd4ce5a
   }
 
   copyToClipboard(text: string | undefined): void {
@@ -171,6 +177,14 @@ export class UserorderComponent implements OnInit {
 
   showCopyToast(): void {
     this.copyToastVisible = true;
+    setTimeout(() => {
+      this.copyToastVisible = false;
+    }, 2000);
+  }
+
+  toast(message: string): void {
+    this.copyToastVisible = true;
+    console.log(message); // Optional: replace with actual toast service
     setTimeout(() => {
       this.copyToastVisible = false;
     }, 2000);
