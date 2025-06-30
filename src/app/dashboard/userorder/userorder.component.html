@@ -8,7 +8,7 @@
   *ngIf="copyToastVisible"
   class="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow-md z-50 animate-fade-in-out"
 >
-  ✅ Product ID copied!
+  ✅ Done
 </div>
 
 <!-- 🌀 Loading spinner -->
@@ -89,23 +89,9 @@
           <span class="text-green-700 font-bold">{{ order?.total | currency: 'KES' }}</span>
         </p>
       </div>
-
-      <!-- 👤 Customer Info -->
-      <div class="space-y-1">
-        <h4 class="text-indigo-600 font-semibold">Customer</h4>
-        <p><span class="font-semibold">Name:</span> {{ order?.userId?.toString() || 'N/A' }}</p>
-        <p><span class="font-semibold">Email:</span> {{ order?.userId?.toString() || 'N/A' }}</p>
-      </div>
-
-      <!-- 🟢 Status Info -->
-      <div class="flex items-end justify-end">
-        <div class="w-full bg-gray-100 text-gray-400 font-semibold py-2 px-4 rounded-md text-center">
-          Order Active
-        </div>
-      </div>
     </div>
 
-    <!-- ❌ Cancel Entire Order Button -->
+    <!--  Cancel Entire Order Button -->
     <div class="pt-4 flex justify-end">
       <button
         class="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow"
@@ -115,6 +101,13 @@
       </button>
     </div>
   </div>
+</div>
+
+<!-- 🧾 Grand Total -->
+<div *ngIf="!loading && orders.length > 0" class="mt-10 p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-right">
+  <p class="text-xl font-semibold text-indigo-800">
+    Grand Total: <span class="text-green-700">{{ grandTotal | currency: 'KES' }}</span>
+  </p>
 </div>
 
 <!-- 🕳 No orders fallback -->

@@ -43,12 +43,15 @@ export class UserorderComponent implements OnInit {
   private loadAllOrders(): void {
     this.farmService.getAllOrders().subscribe({
       next: (data: Order[]) => {
-        this.orders = data;
+        this.orders = data.map(order => ({
+          ...order,
+          total: this.calculateOrderTotal(order),
+        }));
         this.loading = false;
         console.log('Admin orders:', this.orders);
       },
       error: (err) => {
-        console.error('❌ Failed to load orders:', err);
+        console.error(' Failed to load orders:', err);
         this.loading = false;
       },
     });
@@ -57,12 +60,15 @@ export class UserorderComponent implements OnInit {
   private loadUserOrders(): void {
     this.farmService.getMyOrders().subscribe({
       next: (data: Order[]) => {
-        this.orders = data;
+        this.orders = data.map(order => ({
+          ...order,
+          total: this.calculateOrderTotal(order),
+        }));
         this.loading = false;
         console.log('User orders:', this.orders);
       },
       error: (err) => {
-        console.error('❌ Failed to load user orders:', err);
+        console.error(' Failed to load user orders:', err);
         this.loading = false;
         this.loadAllOrdersAndFilter();
       },
@@ -72,12 +78,17 @@ export class UserorderComponent implements OnInit {
   private loadAllOrdersAndFilter(): void {
     this.farmService.getAllOrders().subscribe({
       next: (data: Order[]) => {
-        this.orders = data.filter(order => this.isOwnedByCurrentUser(order));
+        this.orders = data
+          .filter(order => this.isOwnedByCurrentUser(order))
+          .map(order => ({
+            ...order,
+            total: this.calculateOrderTotal(order),
+          }));
         this.loading = false;
         console.log('Filtered user orders:', this.orders);
       },
       error: (err) => {
-        console.error('❌ Failed to load and filter orders:', err);
+        console.error(' Failed to load and filter orders:', err);
         this.loading = false;
       },
     });
@@ -85,7 +96,7 @@ export class UserorderComponent implements OnInit {
 
   cancelOrder(orderId: string): void {
     if (!this.canModifyOrder(orderId)) {
-      alert('❌ Unauthorized: You cannot cancel this order');
+      alert(' Unauthorized: You cannot cancel this order');
       return;
     }
 
@@ -96,9 +107,9 @@ export class UserorderComponent implements OnInit {
           this.loadOrders();
         },
         error: (err) => {
-          console.error('❌ Failed to cancel order:', err);
+          console.error(' Failed to cancel order:', err);
           const msg = err.error?.message || 'Unknown error';
-          this.toast(`❌ Cancel failed: ${msg}`);
+          this.toast(` Cancel failed: ${msg}`);
         },
       });
     }
@@ -106,20 +117,20 @@ export class UserorderComponent implements OnInit {
 
   removeItemFromOrder(orderId: string, productId: string): void {
     if (!this.canModifyOrder(orderId)) {
-      this.toast('❌ Unauthorized: You cannot modify this order');
+      this.toast(' Unauthorized: You cannot modify this order');
       return;
     }
 
     if (confirm('Remove this product from the order?')) {
       this.farmService.removeProductFromOrder(orderId, productId).subscribe({
         next: () => {
-          this.toast('🗑️ Product removed from order.');
+          this.toast(' Product removed from order.');
           this.loadOrders();
         },
         error: (err) => {
-          console.error('❌ Failed to remove product from order:', err);
+          console.error(' Failed to remove product from order:', err);
           const msg = err.error?.message || 'Unknown error occurred';
-          this.toast(`❌ Remove failed: ${msg}`);
+          this.toast(` Remove failed: ${msg}`);
         },
       });
     }
@@ -162,7 +173,7 @@ export class UserorderComponent implements OnInit {
     navigator.clipboard.writeText(text).then(() => {
       this.showCopyToast();
     }).catch(err => {
-      console.error('❌ Clipboard copy failed:', err);
+      console.error(' Clipboard copy failed:', err);
     });
   }
 
@@ -183,5 +194,21 @@ export class UserorderComponent implements OnInit {
 
   refreshOrders(): void {
     this.loadOrders();
+  }
+
+  /**
+   * ✅ Calculates total for each order based on product price * quantity
+   */
+  private calculateOrderTotal(order: Order): number {
+    return order.items?.reduce((sum: number, item: { product: { price: any; }; quantity: any; }) =>
+      sum + ((item?.product?.price || 0) * (item?.quantity || 0)), 0
+    ) || 0;
+  }
+
+  /**
+   * ✅ Computes the grand total across all orders
+   */
+  get grandTotal(): number {
+    return this.orders?.reduce((acc, order) => acc + (order.total || 0), 0);
   }
 }
