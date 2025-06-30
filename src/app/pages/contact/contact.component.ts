@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
   templateUrl: './contact.component.html',
 })
 export class ContactComponent {
-  accessKey = 'YOUR_ACCESS_KEY_HERE'; // Replace with Web3Forms key
+  accessKey = '42c5178e-d0e6-4317-8f51-5b24aca13f8e'; // Replace with Web3Forms key
 
   formData = {
     name: '',
