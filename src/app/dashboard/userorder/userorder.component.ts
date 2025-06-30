@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SearchComponent } from '../search/search.component';
-import { FarmService, Order } from '../../services/farm.service'; // ⬅️ Use Order from FarmService
+import { FarmService, Order } from '../../services/farm.service';
 
 @Component({
   selector: 'app-userorder',
@@ -21,7 +21,7 @@ export class UserorderComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private farmService: FarmService // ⬅️ Use FarmService for all order operations
+    private farmService: FarmService
   ) {}
 
   ngOnInit(): void {
@@ -64,8 +64,6 @@ export class UserorderComponent implements OnInit {
       error: (err) => {
         console.error('❌ Failed to load user orders:', err);
         this.loading = false;
-
-        // Optional fallback
         this.loadAllOrdersAndFilter();
       },
     });
@@ -74,9 +72,7 @@ export class UserorderComponent implements OnInit {
   private loadAllOrdersAndFilter(): void {
     this.farmService.getAllOrders().subscribe({
       next: (data: Order[]) => {
-        this.orders = data.filter(order =>
-          this.isOwnedByCurrentUser(order)
-        );
+        this.orders = data.filter(order => this.isOwnedByCurrentUser(order));
         this.loading = false;
         console.log('Filtered user orders:', this.orders);
       },
@@ -96,12 +92,13 @@ export class UserorderComponent implements OnInit {
     if (confirm('Are you sure you want to cancel this order?')) {
       this.farmService.cancelOrder(orderId).subscribe({
         next: () => {
-          alert('✅ Order canceled successfully!');
+          this.toast('✅ Order canceled successfully!');
           this.loadOrders();
         },
         error: (err) => {
           console.error('❌ Failed to cancel order:', err);
-          alert(`❌ Failed to cancel order: ${err.error?.message || 'Unknown error'}`);
+          const msg = err.error?.message || 'Unknown error';
+          this.toast(`❌ Cancel failed: ${msg}`);
         },
       });
     }
@@ -109,20 +106,20 @@ export class UserorderComponent implements OnInit {
 
   removeItemFromOrder(orderId: string, productId: string): void {
     if (!this.canModifyOrder(orderId)) {
-      alert('❌ Unauthorized: You cannot modify this order');
+      this.toast('❌ Unauthorized: You cannot modify this order');
       return;
     }
 
     if (confirm('Remove this product from the order?')) {
       this.farmService.removeProductFromOrder(orderId, productId).subscribe({
         next: () => {
-          alert('🗑️ Product removed from order.');
+          this.toast('🗑️ Product removed from order.');
           this.loadOrders();
         },
         error: (err) => {
           console.error('❌ Failed to remove product from order:', err);
           const msg = err.error?.message || 'Unknown error occurred';
-          alert(`❌ Failed to remove product: ${msg}`);
+          this.toast(`❌ Remove failed: ${msg}`);
         },
       });
     }
@@ -154,7 +151,6 @@ export class UserorderComponent implements OnInit {
 
   getOrderOwnerInfo(order: Order): string {
     if (!this.isAdmin) return '';
-
     const owner = order.userId || order.customerId || order.buyerId;
     return owner ? `Owner: ${owner}` : 'Owner: Unknown';
   }
@@ -170,6 +166,14 @@ export class UserorderComponent implements OnInit {
 
   showCopyToast(): void {
     this.copyToastVisible = true;
+    setTimeout(() => {
+      this.copyToastVisible = false;
+    }, 2000);
+  }
+
+  toast(message: string): void {
+    this.copyToastVisible = true;
+    console.log(message); // Optional: replace with actual toast service
     setTimeout(() => {
       this.copyToastVisible = false;
     }, 2000);
