@@ -47,6 +47,12 @@ export class SearchComponent {
     });
   }
 
+  cancelSearch() {
+    this.productId = '';
+    this.product = null;
+    this.clearMessages();
+  }
+
   saveToLocal(product: Product) {
     this.clearMessages();
 

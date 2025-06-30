@@ -19,6 +19,14 @@
     {{ isLoading ? 'Searching...' : 'Search' }}
   </button>
 
+  <!-- Cancel Button -->
+  <button
+    class="mt-2 bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400 w-full"
+    (click)="cancelSearch()"
+  >
+    Cancel
+  </button>
+
   <!-- Error / Success Messages -->
   <p *ngIf="error" class="text-red-600 mt-2">{{ error }}</p>
   <p *ngIf="success" class="text-green-600 mt-2">{{ success }}</p>

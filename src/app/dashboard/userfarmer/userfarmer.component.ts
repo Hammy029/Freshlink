@@ -72,7 +72,7 @@ export class UserfarmerComponent implements OnInit {
         if (!this.isAdmin && this.currentUserId) {
           // Regular users see only their own products
           filteredProducts = filteredProducts.filter(prod => 
-            prod.farm === this.currentUserId || 
+            prod.farm._id === this.currentUserId || 
             prod.farmerId === this.currentUserId ||
             prod.userId === this.currentUserId
           );
