@@ -153,17 +153,8 @@ export class UserorderComponent implements OnInit {
    */
   getOrderOwnerInfo(order: Order): string {
     if (!this.isAdmin) return '';
-<<<<<<< HEAD
-
-    const user = order.userId;
-    if (user && typeof user === 'object' && 'username' in user && 'email' in user) {
-      return `Ordered by: ${(user as { username: string; email: string }).username} (${(user as { username: string; email: string }).email})`;
-    }
-    return 'Ordered by: Unknown';
-=======
     const owner = order.userId || order.customerId || order.buyerId;
     return owner ? `Owner: ${owner}` : 'Owner: Unknown';
->>>>>>> d0017c09cfecf842ce93ed3172910d62edd4ce5a
   }
 
   copyToClipboard(text: string | undefined): void {
