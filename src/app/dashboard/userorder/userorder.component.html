@@ -1,7 +1,7 @@
-<h2 class="text-2xl font-bold mb-6 text-gray-800">My Orders</h2>
+<h2 class="text-2xl font-bold mb-6 text-gray-800">
+  {{ isAdmin ? "All Orders" : "Orders for My Products" }}
+</h2>
 <app-search></app-search>
-
-<h2 class="text-2xl font-bold mb-6 text-gray-800">All Orders</h2>
 
 <!-- ✅ Toast Notification -->
 <div
@@ -32,6 +32,8 @@
       <div
         *ngFor="let item of order.items"
         class="bg-gray-50 p-4 rounded-md border text-sm text-gray-700 grid grid-cols-1 sm:grid-cols-3 gap-4 relative"
+        [class.border-green-300]="!isAdmin && canModifyProduct(item)"
+        [class.bg-green-50]="!isAdmin && canModifyProduct(item)"
       >
         <!-- 🧾 Product Info -->
         <div class="space-y-2">
@@ -52,6 +54,13 @@
           <p>
             <span class="font-semibold">Category:</span>
             {{ item?.product?.category?.name || "N/A" }}
+          </p>
+          <!-- ✅ Show ownership indicator for non-admin users -->
+          <p
+            *ngIf="!isAdmin && canModifyProduct(item)"
+            class="text-green-600 font-semibold text-xs"
+          >
+            🌱 Your Product
           </p>
         </div>
 
@@ -91,8 +100,9 @@
           </p>
         </div>
 
-        <!-- ❌ Remove Item Button -->
+        <!-- ❌ Remove Item Button - Only show if user can modify this specific product -->
         <button
+          *ngIf="isAdmin || canModifyProduct(item)"
           class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-xs font-semibold"
           (click)="
             removeItemFromOrder(order?._id || '', item?.product?._id || '')
@@ -128,8 +138,11 @@
       </div>
     </div>
 
-    <!--  Cancel Entire Order Button -->
-    <div class="pt-4 flex justify-end">
+    <!-- Cancel Entire Order Button - Only show if user can modify the order -->
+    <div
+      class="pt-4 flex justify-end"
+      *ngIf="isAdmin || canModifyOrder(order?._id || '')"
+    >
       <button
         class="bg-red-600 hover:bg-red-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow"
         (click)="cancelOrder(order?._id || '')"
@@ -153,5 +166,7 @@
 
 <!-- 🕳 No orders fallback -->
 <ng-template #noOrders>
-  <p class="text-center text-gray-500 text-lg mt-8">No orders found.</p>
+  <p class="text-center text-gray-500 text-lg mt-8">
+    {{ isAdmin ? "No orders found." : "No orders found for your products." }}
+  </p>
 </ng-template>

@@ -36,7 +36,7 @@ export class UserorderComponent implements OnInit {
     if (this.isAdmin) {
       this.loadAllOrders();
     } else {
-      this.loadUserOrders();
+      this.loadFarmOwnerOrders();
     }
   }
 
@@ -51,52 +51,55 @@ export class UserorderComponent implements OnInit {
         console.log('Admin orders:', this.orders);
       },
       error: (err) => {
-        console.error(' Failed to load orders:', err);
+        console.error('Failed to load orders:', err);
         this.loading = false;
       },
     });
   }
 
-  private loadUserOrders(): void {
-    this.farmService.getMyOrders().subscribe({
-      next: (data: Order[]) => {
-        this.orders = data.map((order) => ({
-          ...order,
-          total: this.calculateOrderTotal(order),
-        }));
-        this.loading = false;
-        console.log('User orders:', this.orders);
-      },
-      error: (err) => {
-        console.error(' Failed to load user orders:', err);
-        this.loading = false;
-        this.loadAllOrdersAndFilter();
-      },
-    });
-  }
-
-  private loadAllOrdersAndFilter(): void {
+  /**
+   * ✅ NEW: Load orders that contain products from the current user's farm
+   */
+  private loadFarmOwnerOrders(): void {
     this.farmService.getAllOrders().subscribe({
       next: (data: Order[]) => {
+        // Filter orders that contain products from current user's farm
         this.orders = data
-          .filter((order) => this.isOwnedByCurrentUser(order))
+          .filter((order) => this.containsProductsFromMyFarm(order))
           .map((order) => ({
             ...order,
             total: this.calculateOrderTotal(order),
           }));
         this.loading = false;
-        console.log('Filtered user orders:', this.orders);
+        console.log('Farm owner orders:', this.orders);
       },
       error: (err) => {
-        console.error(' Failed to load and filter orders:', err);
+        console.error('Failed to load farm owner orders:', err);
         this.loading = false;
       },
     });
   }
 
+  /**
+   * ✅ NEW: Check if order contains products from current user's farm
+   */
+  private containsProductsFromMyFarm(order: Order): boolean {
+    if (!this.currentUserId || !order.items) return false;
+
+    return order.items.some(
+      (item: { product: { farm: { _id: any; id: any } } }) => {
+        const farmId = item?.product?.farm?._id || item?.product?.farm?.id;
+        return farmId === this.currentUserId;
+      }
+    );
+  }
+
+  /**
+   * ✅ UPDATED: Farm owners can only modify orders containing their products
+   */
   cancelOrder(orderId: string): void {
     if (!this.canModifyOrder(orderId)) {
-      alert(' Unauthorized: You cannot cancel this order');
+      alert('Unauthorized: You cannot cancel this order');
       return;
     }
 
@@ -107,36 +110,39 @@ export class UserorderComponent implements OnInit {
           this.loadOrders();
         },
         error: (err) => {
-          console.error(' Failed to cancel order:', err);
+          console.error('Failed to cancel order:', err);
           const msg = err.error?.message || 'Unknown error';
-          this.toast(` Cancel failed: ${msg}`);
+          this.toast(`Cancel failed: ${msg}`);
         },
       });
     }
   }
 
   removeItemFromOrder(orderId: string, productId: string): void {
-    if (!this.canModifyOrder(orderId)) {
-      this.toast(' Unauthorized: You cannot modify this order');
+    if (!this.canModifyItemFromOrder(orderId, productId)) {
+      this.toast('Unauthorized: You cannot modify this item');
       return;
     }
 
     if (confirm('Remove this product from the order?')) {
       this.farmService.removeProductFromOrder(orderId, productId).subscribe({
         next: () => {
-          this.toast(' Product removed from order.');
+          this.toast('Product removed from order.');
           this.loadOrders();
         },
         error: (err) => {
-          console.error(' Failed to remove product from order:', err);
+          console.error('Failed to remove product from order:', err);
           const msg = err.error?.message || 'Unknown error occurred';
-          this.toast(` Remove failed: ${msg}`);
+          this.toast(`Remove failed: ${msg}`);
         },
       });
     }
   }
 
-  private canModifyOrder(orderId: string): boolean {
+  /**
+   * ✅ UPDATED: Check if user can modify the order
+   */
+  canModifyOrder(orderId: string): boolean {
     if (this.isAdmin) return true;
 
     const order = this.orders.find(
@@ -144,7 +150,41 @@ export class UserorderComponent implements OnInit {
     );
     if (!order || !this.currentUserId) return false;
 
-    return this.isOwnedByCurrentUser(order);
+    // Farm owners can modify orders containing their products
+    return this.containsProductsFromMyFarm(order);
+  }
+
+  /**
+   * ✅ NEW: Check if user can modify a specific item in the order
+   */
+  private canModifyItemFromOrder(orderId: string, productId: string): boolean {
+    if (this.isAdmin) return true;
+
+    const order = this.orders.find(
+      (o) => o._id === orderId || o.id === orderId
+    );
+    if (!order || !this.currentUserId) return false;
+
+    // Find the specific item
+    const item = order.items?.find(
+      (item: { product: { _id: string } }) => item.product._id === productId
+    );
+    if (!item) return false;
+
+    // Check if this specific product belongs to current user's farm
+    const farmId = item.product?.farm?._id || item.product?.farm?.id;
+    return farmId === this.currentUserId;
+  }
+
+  /**
+   * ✅ NEW: Check if current user owns the farm for a specific product
+   */
+  canModifyProduct(item: any): boolean {
+    if (this.isAdmin) return true;
+    if (!this.currentUserId) return false;
+
+    const farmId = item?.product?.farm?._id || item?.product?.farm?.id;
+    return farmId === this.currentUserId;
   }
 
   isOrderOwner(order: Order): boolean {
@@ -180,7 +220,7 @@ export class UserorderComponent implements OnInit {
         this.showCopyToast();
       })
       .catch((err) => {
-        console.error(' Clipboard copy failed:', err);
+        console.error('Clipboard copy failed:', err);
       });
   }
 
@@ -193,7 +233,7 @@ export class UserorderComponent implements OnInit {
 
   toast(message: string): void {
     this.copyToastVisible = true;
-    console.log(message); // Optional: replace with actual toast service
+    console.log(message);
     setTimeout(() => {
       this.copyToastVisible = false;
     }, 2000);
