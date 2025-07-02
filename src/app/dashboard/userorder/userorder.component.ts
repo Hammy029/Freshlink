@@ -19,14 +19,14 @@ export class UserorderComponent implements OnInit {
   isAdmin = false;
   currentUserId: string | null = null;
 
-  constructor(
-    private router: Router,
-    private farmService: FarmService
-  ) {}
+  constructor(private router: Router, private farmService: FarmService) {}
 
   ngOnInit(): void {
     this.currentUserId = this.farmService.getCurrentUserId();
-    this.isAdmin = this.farmService.isAdmin();
+    const userRole = localStorage.getItem('role');
+    if (userRole === 'admin') {
+      this.isAdmin = true;
+    }
     this.loadOrders();
   }
 
@@ -43,7 +43,7 @@ export class UserorderComponent implements OnInit {
   private loadAllOrders(): void {
     this.farmService.getAllOrders().subscribe({
       next: (data: Order[]) => {
-        this.orders = data.map(order => ({
+        this.orders = data.map((order) => ({
           ...order,
           total: this.calculateOrderTotal(order),
         }));
@@ -60,7 +60,7 @@ export class UserorderComponent implements OnInit {
   private loadUserOrders(): void {
     this.farmService.getMyOrders().subscribe({
       next: (data: Order[]) => {
-        this.orders = data.map(order => ({
+        this.orders = data.map((order) => ({
           ...order,
           total: this.calculateOrderTotal(order),
         }));
@@ -79,8 +79,8 @@ export class UserorderComponent implements OnInit {
     this.farmService.getAllOrders().subscribe({
       next: (data: Order[]) => {
         this.orders = data
-          .filter(order => this.isOwnedByCurrentUser(order))
-          .map(order => ({
+          .filter((order) => this.isOwnedByCurrentUser(order))
+          .map((order) => ({
             ...order,
             total: this.calculateOrderTotal(order),
           }));
@@ -139,7 +139,9 @@ export class UserorderComponent implements OnInit {
   private canModifyOrder(orderId: string): boolean {
     if (this.isAdmin) return true;
 
-    const order = this.orders.find(o => o._id === orderId || o.id === orderId);
+    const order = this.orders.find(
+      (o) => o._id === orderId || o.id === orderId
+    );
     if (!order || !this.currentUserId) return false;
 
     return this.isOwnedByCurrentUser(order);
@@ -153,7 +155,9 @@ export class UserorderComponent implements OnInit {
     if (!this.currentUserId) return false;
 
     return (
-      (typeof order.userId === 'object' && '_id' in order.userId ? (order.userId as { _id: string })._id : order.userId) === this.currentUserId ||
+      (typeof order.userId === 'object' && '_id' in order.userId
+        ? (order.userId as { _id: string })._id
+        : order.userId) === this.currentUserId ||
       order.customerId === this.currentUserId ||
       order.buyerId === this.currentUserId
     );
@@ -170,11 +174,14 @@ export class UserorderComponent implements OnInit {
 
   copyToClipboard(text: string | undefined): void {
     if (!text) return;
-    navigator.clipboard.writeText(text).then(() => {
-      this.showCopyToast();
-    }).catch(err => {
-      console.error(' Clipboard copy failed:', err);
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        this.showCopyToast();
+      })
+      .catch((err) => {
+        console.error(' Clipboard copy failed:', err);
+      });
   }
 
   showCopyToast(): void {
@@ -200,9 +207,13 @@ export class UserorderComponent implements OnInit {
    * ✅ Calculates total for each order based on product price * quantity
    */
   private calculateOrderTotal(order: Order): number {
-    return order.items?.reduce((sum: number, item: { product: { price: any; }; quantity: any; }) =>
-      sum + ((item?.product?.price || 0) * (item?.quantity || 0)), 0
-    ) || 0;
+    return (
+      order.items?.reduce(
+        (sum: number, item: { product: { price: any }; quantity: any }) =>
+          sum + (item?.product?.price || 0) * (item?.quantity || 0),
+        0
+      ) || 0
+    );
   }
 
   /**

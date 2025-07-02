@@ -1436,7 +1436,7 @@ export class MpesaStkModalComponent implements OnInit, OnDestroy, OnChanges {
 
     const paymentData = {
       phoneNumber: this.phoneNumber,
-      amount: 1,
+      amount: this.amount,
       accountReference: this.accountReference,
       description: this.description,
       clientId: '6862bf4011365af6a4059691',
