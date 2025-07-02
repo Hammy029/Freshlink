@@ -27,7 +27,7 @@ export interface Order {
   items: any;
   _id?: string;
   id?: string;
-  userId?: string;
+  userId?: any;
   customerId?: string;
   buyerId?: string;
   products: any[];
@@ -38,7 +38,7 @@ export interface Order {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FarmService {
   private baseUrl = 'http://localhost:3000/farm';
@@ -64,7 +64,7 @@ export class FarmService {
     }
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
   }
 
@@ -82,37 +82,37 @@ export class FarmService {
         : `${this.baseUrl}/my-products`;
 
     return this.http.get<FarmProduct[]>(url, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   getAllProductsAdmin(): Observable<FarmProduct[]> {
     return this.http.get<FarmProduct[]>(`${this.baseUrl}/admin-products`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   getMyProducts(): Observable<FarmProduct[]> {
     return this.http.get<FarmProduct[]>(`${this.baseUrl}/my-products`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   addProduct(product: Partial<FarmProduct>): Observable<FarmProduct> {
     return this.http.post<FarmProduct>(this.baseUrl, product, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   updateProduct(id: string, updatedData: any): Observable<FarmProduct> {
     return this.http.patch<FarmProduct>(`${this.baseUrl}/${id}`, updatedData, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   deleteProduct(id: string): Observable<FarmProduct> {
     return this.http.delete<FarmProduct>(`${this.baseUrl}/${id}`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
@@ -120,7 +120,10 @@ export class FarmService {
     return this.updateProduct(id, { status: 'Sold' });
   }
 
-  reduceProductQuantity(productId: string, quantity: number): Observable<FarmProduct> {
+  reduceProductQuantity(
+    productId: string,
+    quantity: number
+  ): Observable<FarmProduct> {
     return this.http.patch<FarmProduct>(
       `${this.baseUrl}/${productId}/reduce-quantity`,
       { quantity },
@@ -139,61 +142,73 @@ export class FarmService {
         : `${this.ordersUrl}/my-orders?userId=${userId}`;
 
     return this.http.get<Order[]>(url, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   getAllOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(`${this.ordersUrl}`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   getMyOrders(): Observable<Order[]> {
     if (!this.currentUser) return of([]);
     const userId = this.currentUser._id;
-    return this.http.get<Order[]>(`${this.ordersUrl}/my-orders?userId=${userId}`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get<Order[]>(
+      `${this.ordersUrl}/my-orders?userId=${userId}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
 
   getUserOrders(userId: string): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.ordersUrl}/my-orders?userId=${userId}`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get<Order[]>(
+      `${this.ordersUrl}/my-orders?userId=${userId}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
 
   getFarmerOrders(farmerId: string): Observable<Order[]> {
-    return this.http.get<Order[]>(`${this.ordersUrl}/farmer-orders?farmerId=${farmerId}`, {
-      headers: this.getAuthHeaders()
-    });
+    return this.http.get<Order[]>(
+      `${this.ordersUrl}/farmer-orders?farmerId=${farmerId}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
 
   createOrder(orderData: Partial<Order>): Observable<Order> {
     return this.http.post<Order>(this.ordersUrl, orderData, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   updateOrder(orderId: string, updatedData: Partial<Order>): Observable<Order> {
     return this.http.patch<Order>(`${this.ordersUrl}/${orderId}`, updatedData, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   cancelOrder(orderId: string): Observable<Order> {
     return this.http.delete<Order>(`${this.ordersUrl}/${orderId}`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
   deleteOrder(orderId: string): Observable<any> {
     return this.http.delete(`${this.ordersUrl}/${orderId}`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
-  removeProductFromOrder(orderId: string, productId: string): Observable<Order> {
+  removeProductFromOrder(
+    orderId: string,
+    productId: string
+  ): Observable<Order> {
     return this.http.patch<Order>(
       `${this.ordersUrl}/${orderId}/remove-item/${productId}`,
       {},
@@ -202,19 +217,22 @@ export class FarmService {
   }
 
   updateOrderStatus(orderId: string, status: string): Observable<Order> {
-    return this.http.patch<Order>(`${this.ordersUrl}/${orderId}/status`, 
-      { status }, 
+    return this.http.patch<Order>(
+      `${this.ordersUrl}/${orderId}/status`,
+      { status },
       { headers: this.getAuthHeaders() }
     );
   }
 
   getOrderById(orderId: string): Observable<Order> {
     return this.http.get<Order>(`${this.ordersUrl}/${orderId}`, {
-      headers: this.getAuthHeaders()
+      headers: this.getAuthHeaders(),
     });
   }
 
-  notifyFarmer(orderId: string): Observable<{ message: string; orderId: string }> {
+  notifyFarmer(
+    orderId: string
+  ): Observable<{ message: string; orderId: string }> {
     return this.http.post<{ message: string; orderId: string }>(
       `${this.ordersUrl}/${orderId}/notify-farmer`,
       {},

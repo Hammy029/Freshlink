@@ -1,65 +1,421 @@
-<div class="container max-w-2xl mx-auto p-24 text-sm">
-  <!-- ✅ Welcome Header -->
-  <div class="text-center mb-8">
-    <h1 class="text-2xl font-bold text-green-700">Welcome to Your Order Dashboard</h1>
-    <p class="text-gray-600 mt-2">
-      Review the items in your cart below. You can adjust quantities, remove items, or proceed to place your order.
-    </p>
-  </div>
-
-  <!-- ✅ Cart Title -->
-  <h2 class="text-xl font-bold mb-4 text-center">My Cart</h2>
-
-  <!-- ✅ Empty Cart Message -->
-  <div *ngIf="cartItems.length === 0" class="text-center text-gray-500">
-    Your cart is empty.
-  </div>
-
-  <!-- ✅ Cart Items Section -->
-  <div
-    *ngIf="cartItems.length > 0"
-    class="border border-gray-300 rounded-lg shadow-sm p-4 bg-gray-50 space-y-3 print:border-black print:shadow-none print:bg-white"
-  >
-    <!-- Each Cart Item -->
-    <div
-      *ngFor="let item of cartItems"
-      class="p-3 border rounded bg-white shadow-sm flex flex-col sm:flex-row justify-between items-center gap-3 print:border-black print:shadow-none"
-    >
-      <div class="flex-1">
-        <h3 class="text-base font-semibold text-blue-700 print:text-black">{{ item.title }}</h3>
-        <p class="text-gray-600 print:text-black">Price: {{ item.price | number:'1.2-2' }}</p>
-        <p class="text-gray-600 print:text-black">Total: {{ item.total | number:'1.2-2' }}</p>
-      </div>
-
-      <!-- Quantity Controls -->
-      <div class="flex items-center gap-1 print:hidden">
-        <button (click)="decreaseQty(item)" class="bg-gray-300 px-2 py-0.5 rounded text-sm">−</button>
-        <span class="w-6 text-center">{{ item.quantity }}</span>
-        <button (click)="increaseQty(item)" class="bg-gray-300 px-2 py-0.5 rounded text-sm">+</button>
-      </div>
-
-      <!-- Remove Button -->
-      <button
-        (click)="removeItem(item)"
-        class="text-red-600 hover:underline text-xs print:hidden"
-      >
-        Remove
-      </button>
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Shopping Cart</h1>
+      <p class="text-gray-600 mt-2">
+        Review your items and proceed to checkout
+      </p>
     </div>
 
-    <!-- ✅ Grand Total Display -->
-    <div class="text-right font-semibold text-base mt-3 print:text-black">
-      Grand Total: {{ grandTotal | number:'1.2-2' }}
-    </div>
+    <!-- Main Cart Content -->
+    <div class="lg:grid lg:grid-cols-12 lg:gap-8">
+      <!-- Cart Items Section (Left) -->
+      <div class="lg:col-span-7">
+        <!-- Empty Cart -->
+        <div
+          *ngIf="cartItems.length === 0"
+          class="bg-white rounded-lg shadow-sm p-8 text-center"
+        >
+          <div class="flex flex-col items-center">
+            <svg
+              class="w-16 h-16 text-gray-300 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1.8 5.2M7 13v6a2 2 0 002 2h6a2 2 0 002-2v-6M7 13H5a2 2 0 01-2-2V9a2 2 0 012-2h2.4"
+              ></path>
+            </svg>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">
+              Your cart is empty
+            </h3>
+            <p class="text-gray-500 mb-6">
+              Start shopping to add items to your cart
+            </p>
+            <button
+              class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Continue Shopping
+            </button>
+          </div>
+        </div>
 
-    <!-- ✅ Submit Button -->
-    <div class="text-right print:hidden">
-      <button
-        (click)="submitCart()"
-        class="bg-green-600 text-white px-4 py-1.5 rounded hover:bg-green-700 text-sm mt-2"
-      >
-        Place Order
-      </button>
+        <!-- Cart Items -->
+        <div
+          *ngIf="cartItems.length > 0"
+          class="bg-white rounded-lg shadow-sm overflow-hidden"
+        >
+          <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-lg font-medium text-gray-900">
+              Cart Items ({{ cartItems.length }})
+            </h2>
+          </div>
+
+          <div class="divide-y divide-gray-200">
+            <div
+              *ngFor="let item of cartItems; trackBy: trackByProductId"
+              class="p-6 flex items-center space-x-4"
+            >
+              <!-- Product Image Placeholder -->
+              <div
+                class="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="w-8 h-8 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  ></path>
+                </svg>
+              </div>
+
+              <!-- Product Details -->
+              <div class="flex-1 min-w-0">
+                <h3 class="text-lg font-medium text-gray-900 truncate">
+                  {{ item.title }}
+                </h3>
+                <p class="text-sm text-gray-500 mt-1">
+                  Price: KSh {{ item.price | number : "1.2-2" }}
+                </p>
+                <p class="text-sm text-gray-500">
+                  Available: {{ item.availableQuantity }}
+                </p>
+              </div>
+
+              <!-- Quantity Controls -->
+              <div class="flex items-center space-x-3">
+                <button
+                  (click)="decreaseQty(item)"
+                  [disabled]="item.quantity <= 1"
+                  class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M20 12H4"
+                    ></path>
+                  </svg>
+                </button>
+
+                <span class="w-12 text-center font-medium">{{
+                  item.quantity
+                }}</span>
+
+                <button
+                  (click)="increaseQty(item)"
+                  [disabled]="item.quantity >= item.availableQuantity"
+                  class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <svg
+                    class="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Item Total -->
+              <div class="text-lg font-medium text-gray-900 w-24 text-right">
+                KSh {{ item.total | number : "1.2-2" }}
+              </div>
+
+              <!-- Remove Button -->
+              <button
+                (click)="removeItem(item)"
+                class="text-red-500 hover:text-red-700 p-2"
+              >
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Checkout Section (Right) -->
+      <div *ngIf="cartItems.length > 0" class="lg:col-span-5 mt-8 lg:mt-0">
+        <div class="bg-white rounded-lg shadow-sm p-6 sticky top-8">
+          <!-- Order Summary -->
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Order Summary</h3>
+
+          <div class="space-y-3 border-b border-gray-200 pb-4 mb-4">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600"
+                >Subtotal ({{ getTotalItems() }} items)</span
+              >
+              <span class="font-medium"
+                >KSh {{ grandTotal | number : "1.2-2" }}</span
+              >
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Delivery Fee</span>
+              <span class="font-medium"
+                >KSh {{ deliveryFee | number : "1.2-2" }}</span
+              >
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">Tax</span>
+              <span class="font-medium"
+                >KSh {{ taxAmount | number : "1.2-2" }}</span
+              >
+            </div>
+          </div>
+
+          <div
+            class="flex justify-between text-lg font-bold text-gray-900 mb-6"
+          >
+            <span>Total</span>
+            <span>KSh {{ getFinalTotal() | number : "1.2-2" }}</span>
+          </div>
+
+          <!-- Customer Information Form -->
+          <form [formGroup]="checkoutForm" class="space-y-4 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Full Name</label
+              >
+              <input
+                type="text"
+                formControlName="fullName"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+                placeholder="Enter your full name"
+              />
+              <div
+                *ngIf="
+                  checkoutForm.get('fullName')?.invalid &&
+                  checkoutForm.get('fullName')?.touched
+                "
+                class="text-red-500 text-xs mt-1"
+              >
+                Full name is required
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Phone Number</label
+              >
+              <input
+                type="tel"
+                formControlName="phoneNumber"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+                placeholder="254712345678"
+              />
+              <div
+                *ngIf="
+                  checkoutForm.get('phoneNumber')?.invalid &&
+                  checkoutForm.get('phoneNumber')?.touched
+                "
+                class="text-red-500 text-xs mt-1"
+              >
+                Valid phone number is required
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2"
+                >Delivery Address</label
+              >
+              <textarea
+                formControlName="address"
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+                placeholder="Enter your delivery address"
+              ></textarea>
+              <div
+                *ngIf="
+                  checkoutForm.get('address')?.invalid &&
+                  checkoutForm.get('address')?.touched
+                "
+                class="text-red-500 text-xs mt-1"
+              >
+                Delivery address is required
+              </div>
+            </div>
+          </form>
+
+          <!-- Payment Method Selection -->
+          <div class="mb-6">
+            <h4 class="text-sm font-medium text-gray-700 mb-3">
+              Payment Method
+            </h4>
+            <div class="space-y-3">
+              <label
+                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                [class.border-green-500]="selectedPaymentMethod === 'mpesa'"
+                [class.bg-green-50]="selectedPaymentMethod === 'mpesa'"
+              >
+                <input
+                  type="radio"
+                  value="mpesa"
+                  [(ngModel)]="selectedPaymentMethod"
+                  class="text-green-600 focus:ring-green-500"
+                />
+                <div class="ml-3 flex items-center">
+                  <div
+                    class="bg-green-600 text-white px-2 py-1 rounded text-xs font-bold mr-3"
+                  >
+                    M-PESA
+                  </div>
+                  <span class="text-sm font-medium">Pay with M-Pesa</span>
+                </div>
+              </label>
+
+              <label
+                class="flex items-center p-3 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50"
+                [class.border-green-500]="selectedPaymentMethod === 'cash'"
+                [class.bg-green-50]="selectedPaymentMethod === 'cash'"
+              >
+                <input
+                  type="radio"
+                  value="cash"
+                  [(ngModel)]="selectedPaymentMethod"
+                  class="text-green-600 focus:ring-green-500"
+                />
+                <div class="ml-3 flex items-center">
+                  <div
+                    class="bg-gray-600 text-white px-2 py-1 rounded text-xs font-bold mr-3"
+                  >
+                    CASH
+                  </div>
+                  <span class="text-sm font-medium">Cash on Delivery</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Checkout Buttons -->
+          <div class="space-y-3">
+            <button
+              (click)="proceedToCheckout()"
+              [disabled]="
+                checkoutForm.invalid || !selectedPaymentMethod || isProcessing
+              "
+              class="w-full bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+            >
+              <svg
+                *ngIf="isProcessing"
+                class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              {{
+                isProcessing
+                  ? "Processing..."
+                  : selectedPaymentMethod === "mpesa"
+                  ? "Pay with M-Pesa"
+                  : "Place Order (Cash)"
+              }}
+            </button>
+
+            <button
+              class="w-full border border-gray-300 text-gray-700 py-3 px-4 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+            >
+              Continue Shopping
+            </button>
+          </div>
+
+          <!-- Trust Badges -->
+          <div class="mt-6 pt-6 border-t border-gray-200">
+            <div
+              class="flex items-center justify-center space-x-4 text-xs text-gray-500"
+            >
+              <div class="flex items-center">
+                <svg
+                  class="w-4 h-4 mr-1 text-green-500"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                Secure Payment
+              </div>
+              <div class="flex items-center">
+                <svg
+                  class="w-4 h-4 mr-1 text-green-500"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+                Fast Delivery
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<!-- M-Pesa STK Modal -->
+<app-mpesa-stk-modal
+  [isOpen]="showMpesaModal"
+  [phoneNumber]="checkoutForm.get('phoneNumber')?.value || ''"
+  [amount]="getFinalTotal()"
+  [accountReference]="generateOrderReference()"
+  [description]="'Order payment for ' + cartItems.length + ' items'"
+  (paymentSuccess)="onMpesaPaymentSuccess($event)"
+  (paymentFailed)="onMpesaPaymentFailed($event)"
+  (modalClosed)="onMpesaModalClosed()"
+>
+</app-mpesa-stk-modal>

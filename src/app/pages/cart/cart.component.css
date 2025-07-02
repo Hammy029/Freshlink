@@ -1,0 +1,341 @@
+/* Enhanced Cart Component Styles */
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom scrollbar for webkit browsers */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Card hover effects */
+.bg-white {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.bg-white:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Button hover effects */
+.hover\:bg-green-700:hover {
+  transform: translateY(-1px);
+}
+
+.hover\:bg-gray-50:hover {
+  background-color: #f9fafb;
+}
+
+/* Payment method selection animation */
+.payment-method-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.payment-method-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Radio button custom styling */
+input[type="radio"] {
+  accent-color: #059669;
+}
+
+/* Quantity control buttons */
+.quantity-button {
+  transition: all 0.2s ease;
+  border: 1px solid #d1d5db;
+}
+
+.quantity-button:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+  transform: scale(1.05);
+}
+
+.quantity-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading spinner animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* Pulse animation for loading states */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Bounce animation for success states */
+@keyframes bounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%,
+  43% {
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Form input focus states */
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+/* Error state styling */
+.border-red-300 {
+  border-color: #fca5a5;
+}
+
+.text-red-500 {
+  color: #ef4444;
+}
+
+/* Success state styling */
+.border-green-300 {
+  border-color: #86efac;
+}
+
+.text-green-500 {
+  color: #22c55e;
+}
+
+/* Trust badges styling */
+.trust-badge {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border-radius: 0.5rem;
+  border: 1px solid #bae6fd;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .sticky {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  .lg\:grid {
+    display: block;
+  }
+
+  .lg\:grid-cols-12 > div {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Print styles for receipts */
+@media print {
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:border-black {
+    border-color: #000 !important;
+  }
+
+  .print\:shadow-none {
+    box-shadow: none !important;
+  }
+
+  .print\:bg-white {
+    background-color: #fff !important;
+  }
+
+  .print\:text-black {
+    color: #000 !important;
+  }
+}
+
+/* Custom gradient for M-Pesa branding */
+.mpesa-gradient {
+  background: linear-gradient(135deg, #00a86b 0%, #4caf50 100%);
+}
+
+/* Cart item animation on add/remove */
+.cart-item-enter {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.cart-item-leave {
+  animation: slideOutRight 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Notification styles */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  animation: slideInRight 0.3s ease-out;
+}
+
+.notification.success {
+  background-color: #dcfce7;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+
+.notification.error {
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Progress bar styling */
+.progress-bar {
+  background: linear-gradient(90deg, #059669 0%, #34d399 100%);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+/* Checkout button loading state */
+.checkout-button-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.checkout-button-loading::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Responsive grid improvements */
+@media (min-width: 1024px) {
+  .sticky-checkout {
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+}
+
+/* Focus ring for accessibility */
+button:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 2px;
+}
