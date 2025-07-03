@@ -16,6 +16,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string | null = null;
+  showPassword: boolean = false; // 👁️ toggle for password visibility
 
   constructor(
     private authService: AuthService,
@@ -33,15 +34,12 @@ export class LoginComponent {
 
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (res) => {
-        // ✅ Save required data to localStorage
         localStorage.setItem('access_token', res.access_token);
         localStorage.setItem('userId', res.user._id);
 
-        // ✅ Store role with fallback
         const role = res.user.role === 'admin' || res.user.role === 'user' ? res.user.role : 'user';
         localStorage.setItem('role', role);
 
-        // ✅ Navigate within Angular zone
         this.ngZone.run(() => {
           this.router.navigate(['/dashboard']);
         });
@@ -50,9 +48,5 @@ export class LoginComponent {
         this.errorMessage = err.error?.message || 'Login failed. Please try again.';
       },
     });
-  }
-
-  loginWithGoogle() {
-    window.location.href = `${this.authService.googleAuthUrl}`;
   }
 }

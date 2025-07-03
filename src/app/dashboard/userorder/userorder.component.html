@@ -3,7 +3,7 @@
 </h2>
 <app-search></app-search>
 
-<!-- ✅ Toast Notification -->
+<!-- Toast Notification -->
 <div
   *ngIf="copyToastVisible"
   class="fixed top-5 right-5 bg-green-600 text-white px-4 py-2 rounded shadow-md z-50 animate-fade-in-out"
@@ -11,12 +11,12 @@
   ✅ Done
 </div>
 
-<!-- 🌀 Loading spinner -->
+<!--  Loading spinner -->
 <div *ngIf="loading" class="text-center text-indigo-600 font-medium my-4">
   Loading orders...
 </div>
 
-<!-- ✅ Orders Display -->
+<!--  Orders Display -->
 <div
   *ngIf="!loading && orders.length > 0; else noOrders"
   class="grid grid-cols-1 md:grid-cols-2 gap-4"
@@ -25,7 +25,7 @@
     *ngFor="let order of orders"
     class="bg-white border rounded-xl shadow-sm p-4 hover:shadow-md transition-all flex flex-col justify-between space-y-6"
   >
-    <!-- 🛒 Ordered Products -->
+    <!--  Ordered Products -->
     <div class="space-y-4">
       <h3 class="text-lg font-semibold text-indigo-700">Ordered Products</h3>
 
@@ -35,7 +35,7 @@
         [class.border-green-300]="!isAdmin && canModifyProduct(item)"
         [class.bg-green-50]="!isAdmin && canModifyProduct(item)"
       >
-        <!-- 🧾 Product Info -->
+        <!-- Product Info -->
         <div class="space-y-2">
           <p class="font-semibold text-indigo-600">Product Details</p>
           <p>
@@ -55,16 +55,16 @@
             <span class="font-semibold">Category:</span>
             {{ item?.product?.category?.name || "N/A" }}
           </p>
-          <!-- ✅ Show ownership indicator for non-admin users -->
+          <!--  Show ownership indicator for non-admin users -->
           <p
             *ngIf="!isAdmin && canModifyProduct(item)"
             class="text-green-600 font-semibold text-xs"
           >
-            🌱 Your Product
+            Your Product
           </p>
         </div>
 
-        <!-- 👨‍🌾 Farm Owner Info -->
+        <!--  Farm Owner Info -->
         <div class="space-y-2">
           <p class="font-semibold text-indigo-600">Farm Owner</p>
           <p>
@@ -81,7 +81,7 @@
           </p>
         </div>
 
-        <!-- 💳 Purchase Info -->
+        <!--  Purchase Info -->
         <div class="space-y-2">
           <p class="font-semibold text-indigo-600">Purchase Info</p>
 
@@ -100,8 +100,8 @@
           </p>
         </div>
 
-        <!-- ❌ Remove Item Button - Only show if user can modify this specific product -->
-        <button
+        <!--  Remove Item Button - Only show if user can modify this specific product -->
+       <button
           *ngIf="isAdmin || canModifyProduct(item)"
           class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-xs font-semibold"
           (click)="
@@ -114,7 +114,7 @@
       </div>
     </div>
 
-    <!-- 📦 Order Summary -->
+    <!--  Order Summary -->
     <div
       class="border-t pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-800"
     >
@@ -153,7 +153,7 @@
   </div>
 </div>
 
-<!-- 🧾 Grand Total -->
+<!--  Grand Total -->
 <div
   *ngIf="!loading && orders.length > 0"
   class="mt-10 p-4 bg-indigo-50 border border-indigo-200 rounded-xl text-right"

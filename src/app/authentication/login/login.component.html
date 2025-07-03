@@ -1,7 +1,9 @@
-<div class="max-w-md mx-auto mt-0 p-30 bg-white rounded-lg shadow-md">
-  <h2 class="text-2xl font-semibold mb-6 text-center">Login</h2>
+<div class="max-w-3xl mx-auto 
+ p-30 bg-white rounded-lg shadow-lg">
+  <h2 class="text-3xl font-semibold mb-8 text-center">Login</h2>
 
-  <form (ngSubmit)="onSubmit($event)" #loginForm="ngForm" class="space-y-5">
+  <form (ngSubmit)="onSubmit($event)" #loginForm="ngForm" class="space-y-7">
+    <!-- Email Field -->
     <div>
       <label for="email" class="block mb-1 font-medium text-gray-700">Email</label>
       <input
@@ -13,64 +15,71 @@
         email
         #emailInput="ngModel"
         placeholder="Enter gmail"
-        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="w-full px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <div *ngIf="loginForm.submitted && emailInput.invalid" class="text-red-600 mt-1 text-sm">
         Email is required.
       </div>
     </div>
 
+    <!-- Password Field with Toggle -->
     <div>
       <label for="password" class="block mb-1 font-medium text-gray-700">Password</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        [(ngModel)]="password"
-        required
-        minlength="6"
-        #passwordInput="ngModel"
-        placeholder="********"
-        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      <div class="relative">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          minlength="6"
+          #passwordInput="ngModel"
+          placeholder="********"
+          class="w-full px-5 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button type="button" (click)="showPassword = !showPassword" class="absolute inset-y-0 right-3 flex items-center text-gray-500">
+          <svg *ngIf="!showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+          <svg *ngIf="showPassword" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.974 9.974 0 012.588-4.412m2.888-2.314A9.956 9.956 0 0112 5c4.477 0 8.267 2.943 9.542 7a9.978 9.978 0 01-4.49 5.938M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 3l18 18"/>
+          </svg>
+        </button>
+      </div>
       <div *ngIf="loginForm.submitted && passwordInput.invalid" class="text-red-600 mt-1 text-sm">
         Password is required.
       </div>
     </div>
 
+    <!-- Login Button -->
     <button
       type="submit"
-      class="w-full bg-green-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition"
+      class="w-full bg-green-600 text-white font-semibold py-3 rounded-md hover:bg-green-700 transition"
     >
       Login
     </button>
-<div class="text-center mt-4">
-  <button
-    type="button"
-    (click)="loginWithGoogle()"
-    class="inline-flex items-center justify-center w-full py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition"
-  >
-    <img
-      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-      alt="Google logo"
-      class="w-5 h-5 mr-2"
-    />
-    Login with Google
-  </button>
-</div>
 
-
-    <div class="text-center mt-4 text-sm">
+    <!-- Forgot Password -->
+    <div class="text-center mt-5 text-sm">
       <a routerLink="/forgot-password" class="text-green-600 hover:underline">Forgot Password?</a>
     </div>
 
-    <!-- ✅ Register Link -->
-    <div class="text-center mt-2 text-sm">
+    <!-- Register Link -->
+    <div class="text-center mt-3 text-sm">
       Don't have an account?
       <a routerLink="/register" class="text-green-600 hover:underline font-medium">Register here</a>
     </div>
 
-    <div *ngIf="errorMessage" class="text-red-600 text-center mt-3 text-sm">
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="text-red-600 text-center mt-4 text-sm">
       {{ errorMessage }}
     </div>
   </form>

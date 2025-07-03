@@ -168,7 +168,7 @@ export class CartComponent implements OnInit {
       },
       error: (error) => {
         console.error('❌ Cash order failed:', error);
-        this.handleOrderError('Failed to place order. Please try again.');
+        this.handleOrderError('Failed.Please register and login first.');
       },
     });
   }
