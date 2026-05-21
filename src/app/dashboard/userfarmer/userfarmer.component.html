@@ -28,7 +28,10 @@
           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
         >
           <option value="" disabled>Select category</option>
-          <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
+          <option value="6a0ea7c6f174395eda4c5c7c">Fruit</option>
+          <option value="6a0ea7c6f174395eda4c5c7d">Vegetable</option>
+          <option value="6a0ea7c6f174395eda4c5c7e">Cereal</option>
+          <option value="6a0ea7c6f174395eda4c5c7f">Legumes</option>
         </select>
       </div>
 
@@ -156,7 +159,10 @@
           [ngClass]="{ 'border-red-500': category.invalid && category.touched }"
         >
           <option [ngValue]="null" disabled selected>Select category</option>
-          <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
+          <option value="6a0ea7c6f174395eda4c5c7c">Fruit</option>
+          <option value="6a0ea7c6f174395eda4c5c7d">Vegetable</option>
+          <option value="6a0ea7c6f174395eda4c5c7e">Cereal</option>
+          <option value="6a0ea7c6f174395eda4c5c7f">Legumes</option>
         </select>
         <p *ngIf="category.invalid && category.touched" class="text-red-500 text-sm mt-1">Category is required.</p>
       </div>
@@ -268,7 +274,7 @@
             <span *ngIf="!prod.imageUrl" class="text-gray-400 text-xs">No image</span>
           </td>
           <td class="px-4 py-2">{{ prod.title }}</td>
-          <td class="px-4 py-2">{{ getCategoryName(prod.category) }}</td>
+          <td class="px-4 py-2">{{ prod.category }}</td>
           <td class="px-4 py-2">{{ prod.quantity }}</td>
           <td class="px-4 py-2">Ksh {{ prod.price }}</td>
           <td class="px-4 py-2">

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Category, UsercategoryService } from '../../services/usercategory.service';
 import { FarmService } from '../../services/farm.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 interface ProductPayload {
   title: string;
-  category: string;
+  category: string | null;
   quantity: number | null;
   price: number | null;
   description: string;
@@ -24,7 +23,7 @@ interface ProductPayload {
 export class UserfarmerComponent implements OnInit {
   product: ProductPayload = {
     title: '',
-    category: '',
+    category: null,
     quantity: null,
     price: null,
     description: '',
@@ -32,33 +31,22 @@ export class UserfarmerComponent implements OnInit {
   };
 
   products: any[] = [];
-  categories: Category[] = [];
   editingProduct: any = null;
   showAddForm: boolean = false;
   isAdmin: boolean = false;
   isSubmitting: boolean = false;
   currentUserId: string | null = null;
 
-  constructor(
-    private categoryService: UsercategoryService,
-    private farmService: FarmService
-  ) {}
+  constructor(private farmService: FarmService) {}
 
   ngOnInit(): void {
-    this.currentUserId = localStorage.getItem('userId');
+    // ✅ Use the service's own method — reads from localStorage 'user' key
+    this.farmService.refreshCurrentUser();
+    this.currentUserId = this.farmService.getCurrentUserId();
     this.isAdmin = this.farmService.isAdmin();
-    this.loadCategoriesAndThenProducts();
-  }
-
-  private loadCategoriesAndThenProducts(): void {
-    this.categoryService.getCategories().subscribe({
-      next: (cats: Category[]) => {
-        this.categories = cats;
-        console.log('Categories loaded:', this.categories);
-        this.fetchProducts();
-      },
-      error: err => console.error('Error loading categories:', err)
-    });
+    console.log('Current user ID:', this.currentUserId);
+    console.log('Is admin:', this.isAdmin);
+    this.fetchProducts();
   }
 
   private getFarmId(farm: any): string {
@@ -68,23 +56,10 @@ export class UserfarmerComponent implements OnInit {
   private fetchProducts(): void {
     this.farmService.getProducts().subscribe({
       next: (data: any[]) => {
-        let filteredProducts = data.map(prod => ({
+        this.products = data.map(prod => ({
           ...prod,
           status: prod.status || 'Available'
         }));
-
-        if (!this.isAdmin && this.currentUserId) {
-          filteredProducts = filteredProducts.filter(prod => {
-            const farmId = this.getFarmId(prod.farm);
-            return (
-              farmId === this.currentUserId ||
-              prod.farmerId === this.currentUserId ||
-              prod.userId === this.currentUserId
-            );
-          });
-        }
-
-        this.products = filteredProducts;
         console.log('Products loaded:', this.products);
       },
       error: err => console.error('Error fetching products:', err)
@@ -98,24 +73,33 @@ export class UserfarmerComponent implements OnInit {
 
   postProduct(): void {
     if (this.isSubmitting) return;
-    this.isSubmitting = true;
+
+    // ✅ Refresh user before posting in case session changed
+    this.currentUserId = this.farmService.getCurrentUserId();
 
     if (!this.currentUserId) {
-      console.error('User ID not found in localStorage.');
-      this.isSubmitting = false;
+      console.error('User not logged in. Cannot add product.');
+      alert('You must be logged in to add a product.');
       return;
     }
 
+    this.isSubmitting = true;
+
     const payload: any = {
-      ...this.product,
+      title: this.product.title,
+      category: this.product.category,
       price: Number(this.product.price),
       quantity: Number(this.product.quantity),
-      farm: this.currentUserId,
+      description: this.product.description,
+      imageUrl: this.product.imageUrl || '',
       status: 'Available'
     };
 
+    console.log('Submitting product payload:', payload);
+
     this.farmService.addProduct(payload).subscribe({
       next: (res: any) => {
+        console.log('Product added successfully:', res);
         this.products.unshift(res);
         this.resetForm();
         this.showAddForm = false;
@@ -123,6 +107,7 @@ export class UserfarmerComponent implements OnInit {
       },
       error: err => {
         console.error('Error posting product:', err);
+        alert('Failed to add product. Check console for details.');
         this.isSubmitting = false;
       }
     });
@@ -131,7 +116,7 @@ export class UserfarmerComponent implements OnInit {
   private resetForm(): void {
     this.product = {
       title: '',
-      category: '',
+      category: null,
       quantity: null,
       price: null,
       description: '',
@@ -140,11 +125,6 @@ export class UserfarmerComponent implements OnInit {
   }
 
   markAsSold(id: string): void {
-    if (!this.canModifyProduct(id)) {
-      console.error('Unauthorized: Cannot modify this product');
-      return;
-    }
-
     this.farmService.markAsSold(id).subscribe({
       next: () => {
         const item = this.products.find(p => p._id === id);
@@ -155,11 +135,6 @@ export class UserfarmerComponent implements OnInit {
   }
 
   deleteProduct(id: string): void {
-    if (!this.canModifyProduct(id)) {
-      console.error('Unauthorized: Cannot delete this product');
-      return;
-    }
-
     this.farmService.deleteProduct(id).subscribe({
       next: () => {
         this.products = this.products.filter(p => p._id !== id);
@@ -169,11 +144,6 @@ export class UserfarmerComponent implements OnInit {
   }
 
   startEdit(prod: any): void {
-    if (!this.canModifyProduct(prod._id)) {
-      console.error('Unauthorized: Cannot edit this product');
-      return;
-    }
-
     this.editingProduct = { ...prod };
     this.showAddForm = false;
   }
@@ -184,12 +154,6 @@ export class UserfarmerComponent implements OnInit {
 
   updateProduct(): void {
     if (!this.editingProduct || this.isSubmitting) return;
-
-    if (!this.canModifyProduct(this.editingProduct._id)) {
-      console.error('Unauthorized: Cannot update this product');
-      return;
-    }
-
     this.isSubmitting = true;
 
     const updatedPayload: any = {
@@ -219,20 +183,6 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
-  private canModifyProduct(productId: string): boolean {
-    if (this.isAdmin) return true;
-
-    const product = this.products.find(p => p._id === productId);
-    if (!product || !this.currentUserId) return false;
-
-    const farmId = this.getFarmId(product.farm);
-    return (
-      farmId === this.currentUserId ||
-      product.farmerId === this.currentUserId ||
-      product.userId === this.currentUserId
-    );
-  }
-
   isOwner(product: any): boolean {
     if (!this.currentUserId) return false;
     const farmId = this.getFarmId(product.farm);
@@ -241,11 +191,5 @@ export class UserfarmerComponent implements OnInit {
       product.farmerId === this.currentUserId ||
       product.userId === this.currentUserId
     );
-  }
-
-  getCategoryName(category: any): string {
-    if (typeof category === 'object' && category?.name) return category.name;
-    const found = this.categories.find(c => c._id === category);
-    return found ? found.name : 'Unknown';
   }
 }
