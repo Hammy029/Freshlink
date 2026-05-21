@@ -7,8 +7,8 @@ import { CommonModule } from '@angular/common';
 interface ProductPayload {
   title: string;
   category: string;
-  quantity: number;
-  price: number;
+  quantity: number | null;
+  price: number | null;
   description: string;
   imageUrl?: string;
   status?: 'Available' | 'Sold';
@@ -25,8 +25,8 @@ export class UserfarmerComponent implements OnInit {
   product: ProductPayload = {
     title: '',
     category: '',
-    quantity: 0,
-    price: 0,
+    quantity: null,
+    price: null,
     description: '',
     imageUrl: ''
   };
@@ -37,7 +37,7 @@ export class UserfarmerComponent implements OnInit {
   showAddForm: boolean = false;
   isAdmin: boolean = false;
   isSubmitting: boolean = false;
-  currentUserId: string | null = null; // ✅ Added to track current user
+  currentUserId: string | null = null;
 
   constructor(
     private categoryService: UsercategoryService,
@@ -45,7 +45,7 @@ export class UserfarmerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.currentUserId = localStorage.getItem('userId'); // ✅ Get current user ID
+    this.currentUserId = localStorage.getItem('userId');
     this.isAdmin = this.farmService.isAdmin();
     this.loadCategoriesAndThenProducts();
   }
@@ -54,10 +54,15 @@ export class UserfarmerComponent implements OnInit {
     this.categoryService.getCategories().subscribe({
       next: (cats: Category[]) => {
         this.categories = cats;
+        console.log('Categories loaded:', this.categories);
         this.fetchProducts();
       },
       error: err => console.error('Error loading categories:', err)
     });
+  }
+
+  private getFarmId(farm: any): string {
+    return typeof farm === 'object' && farm !== null ? farm._id : farm;
   }
 
   private fetchProducts(): void {
@@ -68,18 +73,19 @@ export class UserfarmerComponent implements OnInit {
           status: prod.status || 'Available'
         }));
 
-        // ✅ Filter products based on user role
         if (!this.isAdmin && this.currentUserId) {
-          // Regular users see only their own products
-          filteredProducts = filteredProducts.filter(prod => 
-            prod.farm._id === this.currentUserId || 
-            prod.farmerId === this.currentUserId ||
-            prod.userId === this.currentUserId
-          );
+          filteredProducts = filteredProducts.filter(prod => {
+            const farmId = this.getFarmId(prod.farm);
+            return (
+              farmId === this.currentUserId ||
+              prod.farmerId === this.currentUserId ||
+              prod.userId === this.currentUserId
+            );
+          });
         }
-        // ✅ Admins see all products (no filtering)
 
         this.products = filteredProducts;
+        console.log('Products loaded:', this.products);
       },
       error: err => console.error('Error fetching products:', err)
     });
@@ -100,11 +106,11 @@ export class UserfarmerComponent implements OnInit {
       return;
     }
 
-    const payload: ProductPayload = {
+    const payload: any = {
       ...this.product,
       price: Number(this.product.price),
       quantity: Number(this.product.quantity),
-      farm: this.currentUserId, // ✅ Use currentUserId instead of farmerId
+      farm: this.currentUserId,
       status: 'Available'
     };
 
@@ -114,9 +120,6 @@ export class UserfarmerComponent implements OnInit {
         this.resetForm();
         this.showAddForm = false;
         this.isSubmitting = false;
-
-        const formEl = document.querySelector('form');
-        if (formEl) (formEl as HTMLFormElement).reset();
       },
       error: err => {
         console.error('Error posting product:', err);
@@ -129,15 +132,14 @@ export class UserfarmerComponent implements OnInit {
     this.product = {
       title: '',
       category: '',
-      quantity: 0,
-      price: 0,
+      quantity: null,
+      price: null,
       description: '',
       imageUrl: ''
     };
   }
 
   markAsSold(id: string): void {
-    // ✅ Check if user can modify this product
     if (!this.canModifyProduct(id)) {
       console.error('Unauthorized: Cannot modify this product');
       return;
@@ -153,7 +155,6 @@ export class UserfarmerComponent implements OnInit {
   }
 
   deleteProduct(id: string): void {
-    // ✅ Check if user can modify this product
     if (!this.canModifyProduct(id)) {
       console.error('Unauthorized: Cannot delete this product');
       return;
@@ -168,7 +169,6 @@ export class UserfarmerComponent implements OnInit {
   }
 
   startEdit(prod: any): void {
-    // ✅ Check if user can modify this product
     if (!this.canModifyProduct(prod._id)) {
       console.error('Unauthorized: Cannot edit this product');
       return;
@@ -184,17 +184,15 @@ export class UserfarmerComponent implements OnInit {
 
   updateProduct(): void {
     if (!this.editingProduct || this.isSubmitting) return;
-    
-    // ✅ Check if user can modify this product
+
     if (!this.canModifyProduct(this.editingProduct._id)) {
       console.error('Unauthorized: Cannot update this product');
-      this.isSubmitting = false;
       return;
     }
 
     this.isSubmitting = true;
 
-    const updatedPayload: ProductPayload = {
+    const updatedPayload: any = {
       title: this.editingProduct.title,
       description: this.editingProduct.description,
       price: Number(this.editingProduct.price),
@@ -221,30 +219,32 @@ export class UserfarmerComponent implements OnInit {
     });
   }
 
-  // ✅ Helper method to check if current user can modify a product
   private canModifyProduct(productId: string): boolean {
-    if (this.isAdmin) return true; // Admins can modify any product
-    
+    if (this.isAdmin) return true;
+
     const product = this.products.find(p => p._id === productId);
     if (!product || !this.currentUserId) return false;
-    
-    // Regular users can only modify their own products
-    return product.farm === this.currentUserId || 
-           product.farmerId === this.currentUserId ||
-           product.userId === this.currentUserId;
+
+    const farmId = this.getFarmId(product.farm);
+    return (
+      farmId === this.currentUserId ||
+      product.farmerId === this.currentUserId ||
+      product.userId === this.currentUserId
+    );
   }
 
-  // ✅ Helper method to check if current user owns a product (for UI display)
   isOwner(product: any): boolean {
     if (!this.currentUserId) return false;
-    return product.farm === this.currentUserId || 
-           product.farmerId === this.currentUserId ||
-           product.userId === this.currentUserId;
+    const farmId = this.getFarmId(product.farm);
+    return (
+      farmId === this.currentUserId ||
+      product.farmerId === this.currentUserId ||
+      product.userId === this.currentUserId
+    );
   }
 
   getCategoryName(category: any): string {
-    if (typeof category === 'object' && category.name) return category.name;
-
+    if (typeof category === 'object' && category?.name) return category.name;
     const found = this.categories.find(c => c._id === category);
     return found ? found.name : 'Unknown';
   }

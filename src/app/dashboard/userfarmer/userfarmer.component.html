@@ -3,6 +3,7 @@
   <h3 class="text-xl font-semibold mb-4 text-gray-800">Edit Product</h3>
   <form (ngSubmit)="updateProduct()" #updateForm="ngForm" class="space-y-4">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
       <!-- Title -->
       <div>
         <label for="editTitle" class="block text-sm font-medium text-gray-700">Product Title</label>
@@ -12,7 +13,7 @@
           type="text"
           [(ngModel)]="editingProduct.title"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
         />
       </div>
 
@@ -24,7 +25,7 @@
           name="category"
           [(ngModel)]="editingProduct.category"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
         >
           <option value="" disabled>Select category</option>
           <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
@@ -41,7 +42,7 @@
           min="1"
           [(ngModel)]="editingProduct.quantity"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
         />
       </div>
 
@@ -56,7 +57,7 @@
           step="0.01"
           [(ngModel)]="editingProduct.price"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
         />
       </div>
 
@@ -68,7 +69,7 @@
           name="imageUrl"
           type="text"
           [(ngModel)]="editingProduct.imageUrl"
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           placeholder="https://example.com/image.jpg"
         />
         <div *ngIf="editingProduct.imageUrl" class="mt-2">
@@ -85,7 +86,7 @@
         name="description"
         rows="3"
         [(ngModel)]="editingProduct.description"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
       ></textarea>
     </div>
 
@@ -93,10 +94,10 @@
     <div class="space-x-4">
       <button
         type="submit"
-        [disabled]="updateForm.invalid"
-        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        [disabled]="updateForm.invalid || isSubmitting"
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Update Product
+        {{ isSubmitting ? 'Updating...' : 'Update Product' }}
       </button>
       <button
         type="button"
@@ -112,7 +113,7 @@
 <!-- Toggle Add Product Button -->
 <div class="max-w-3xl mx-auto mb-4">
   <button
-    (click)="showAddForm = !showAddForm"
+    (click)="toggleAddForm()"
     class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
     *ngIf="!editingProduct"
   >
@@ -125,6 +126,7 @@
   <h2 class="text-lg font-semibold mb-4 text-gray-800">Add New Product</h2>
   <form (ngSubmit)="postProduct()" #addForm="ngForm" class="space-y-4" autocomplete="off">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
       <!-- Title -->
       <div>
         <label for="title" class="block text-sm font-medium text-gray-700">Product Title</label>
@@ -135,10 +137,10 @@
           [(ngModel)]="product.title"
           #title="ngModel"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           [ngClass]="{ 'border-red-500': title.invalid && title.touched }"
         />
-        <p *ngIf="title.invalid && title.touched" class="text-red-500 text-sm">Product title is required.</p>
+        <p *ngIf="title.invalid && title.touched" class="text-red-500 text-sm mt-1">Product title is required.</p>
       </div>
 
       <!-- Category -->
@@ -150,13 +152,13 @@
           [(ngModel)]="product.category"
           #category="ngModel"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           [ngClass]="{ 'border-red-500': category.invalid && category.touched }"
         >
-          <option value="" disabled>Select category</option>
+          <option [ngValue]="null" disabled selected>Select category</option>
           <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
         </select>
-        <p *ngIf="category.invalid && category.touched" class="text-red-500 text-sm">Category is required.</p>
+        <p *ngIf="category.invalid && category.touched" class="text-red-500 text-sm mt-1">Category is required.</p>
       </div>
 
       <!-- Quantity -->
@@ -170,10 +172,10 @@
           [(ngModel)]="product.quantity"
           #quantity="ngModel"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           [ngClass]="{ 'border-red-500': quantity.invalid && quantity.touched }"
         />
-        <p *ngIf="quantity.invalid && quantity.touched" class="text-red-500 text-sm">Quantity is required.</p>
+        <p *ngIf="quantity.invalid && quantity.touched" class="text-red-500 text-sm mt-1">Quantity must be at least 1.</p>
       </div>
 
       <!-- Price -->
@@ -188,10 +190,10 @@
           [(ngModel)]="product.price"
           #price="ngModel"
           required
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           [ngClass]="{ 'border-red-500': price.invalid && price.touched }"
         />
-        <p *ngIf="price.invalid && price.touched" class="text-red-500 text-sm">Price is required.</p>
+        <p *ngIf="price.invalid && price.touched" class="text-red-500 text-sm mt-1">Price is required.</p>
       </div>
 
       <!-- Image URL -->
@@ -202,8 +204,7 @@
           name="imageUrl"
           type="text"
           [(ngModel)]="product.imageUrl"
-          #imageUrl="ngModel"
-          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
           placeholder="https://example.com/image.jpg"
         />
         <div *ngIf="product.imageUrl" class="mt-2">
@@ -212,6 +213,7 @@
       </div>
     </div>
 
+    <!-- Description -->
     <div>
       <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
       <textarea
@@ -219,21 +221,21 @@
         name="description"
         rows="3"
         [(ngModel)]="product.description"
-        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
+        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2"
         placeholder="Optional"
       ></textarea>
     </div>
 
     <button
       type="submit"
-      [disabled]="addForm.invalid"
+      [disabled]="addForm.invalid || isSubmitting"
       class="text-white px-4 py-2 rounded"
       [ngClass]="{
-        'bg-green-600 hover:bg-green-700': !addForm.invalid,
-        'bg-gray-400 cursor-not-allowed': addForm.invalid
+        'bg-green-600 hover:bg-green-700': !addForm.invalid && !isSubmitting,
+        'bg-gray-400 cursor-not-allowed': addForm.invalid || isSubmitting
       }"
     >
-      Add Product
+      {{ isSubmitting ? 'Adding...' : 'Add Product' }}
     </button>
   </form>
 </div>
@@ -257,15 +259,21 @@
       <tbody>
         <tr *ngFor="let prod of products" class="border-b hover:bg-gray-50">
           <td class="px-4 py-2">
-            <img *ngIf="prod.imageUrl" [src]="prod.imageUrl" alt="Image" class="w-16 h-12 object-cover rounded border" />
+            <img
+              *ngIf="prod.imageUrl"
+              [src]="prod.imageUrl"
+              alt="Image"
+              class="w-16 h-12 object-cover rounded border"
+            />
+            <span *ngIf="!prod.imageUrl" class="text-gray-400 text-xs">No image</span>
           </td>
           <td class="px-4 py-2">{{ prod.title }}</td>
           <td class="px-4 py-2">{{ getCategoryName(prod.category) }}</td>
           <td class="px-4 py-2">{{ prod.quantity }}</td>
-          <td class="px-4 py-2">{{ prod.price }}</td>
+          <td class="px-4 py-2">Ksh {{ prod.price }}</td>
           <td class="px-4 py-2">
             <span
-              class="px-2 py-1 rounded text-xs"
+              class="px-2 py-1 rounded text-xs font-medium"
               [ngClass]="{
                 'bg-green-100 text-green-600': prod.status === 'Available',
                 'bg-yellow-100 text-yellow-600': prod.status === 'Sold'
@@ -276,7 +284,7 @@
           </td>
           <td class="px-4 py-2 space-x-2">
             <button
-              class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+              class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 disabled:opacity-50"
               (click)="startEdit(prod)"
               [disabled]="editingProduct && editingProduct._id === prod._id"
               title="Edit this product"
@@ -284,7 +292,7 @@
               Edit
             </button>
             <button
-              class="px-3 py-1 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600"
+              class="px-3 py-1 bg-yellow-500 text-white text-sm rounded hover:bg-yellow-600 disabled:opacity-50"
               (click)="markAsSold(prod._id)"
               [disabled]="prod.status === 'Sold'"
               title="Mark product as sold"
@@ -301,7 +309,7 @@
           </td>
         </tr>
         <tr *ngIf="products.length === 0">
-          <td colspan="7" class="text-center py-4 text-gray-500">No products found.</td>
+          <td colspan="7" class="text-center py-6 text-gray-500">No products found.</td>
         </tr>
       </tbody>
     </table>
